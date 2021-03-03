@@ -4,6 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home">
+    tools:context=".Home"
+    android:background="@drawable/bg">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:indeterminateOnly="false"
+        android:progress="30"
+        android:progressDrawable="@drawable/circle"
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="47dp" />
+
+    <TextView
+        android:id="@+id/tv_gas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nồng độ"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/progress_bar"
+        app:layout_constraintTop_toTopOf="@+id/progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/progress_bar"/>
+
+    <TextView
+        android:id="@+id/tv_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mức độ"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:background="@drawable/text_style"
+        tools:layout_editor_absoluteX="176dp"
+        tools:layout_editor_absoluteY="268dp" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tình trạng"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:background="@drawable/text_style"
+        tools:layout_editor_absoluteX="176dp"
+        tools:layout_editor_absoluteY="310dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
