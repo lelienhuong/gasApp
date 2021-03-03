@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "571637136209",
+    "firebase_url": "https://gasapp-56c66-default-rtdb.firebaseio.com",
+    "project_id": "gasapp-56c66",
+    "storage_bucket": "gasapp-56c66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571637136209:android:56bfca908b0835345c3170",
+        "android_client_info": {
+          "package_name": "com.lh.gasapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571637136209-64rnhj7j9vdds6m7iuvhr5bbco46r4bi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVPIStS-BNeHLOLhoPHlAGdNbcV9D-z-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571637136209-64rnhj7j9vdds6m7iuvhr5bbco46r4bi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
