@@ -115,53 +115,13 @@ public class Home extends AppCompatActivity {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker("Tutorialspoint")
                 //.setPriority(Notification.PRIORITY_MAX)
-                .setContentTitle("sample notification")
-                .setContentText("This is sample notification")
+                .setContentTitle("WARNING GAS LEAK!")
+                .setContentText("Khí gas ở mức NGUY HIỂM ! ")
                 .setContentInfo("Information");
         notificationManager.notify(1, notificationBuilder.build());
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
     }
 
-//    private void showAlertDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("One More Step!");
-//        builder.setMessage("Enter Your phone and address:");
-//        final EditText edtName = new EditText(this);
-//        edtName.setHint("Your Name: ");
-//        final EditText edtPhone = new EditText(this);
-//        edtPhone.setHint("Phone number: ");
-//        final EditText edtAddress = new EditText(this);
-//        edtAddress.setHint("Your address: ");
-//        LinearLayout linearLayout = new LinearLayout(this);
-//        linearLayout.setOrientation(LinearLayout.VERTICAL);
-//        linearLayout.addView(edtName);
-//        linearLayout.addView(edtPhone);
-//        linearLayout.addView(edtAddress);
-//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT
-//        );
-//        linearLayout.setLayoutParams(lp);
-////            edtPhone.setLayoutParams(lp);
-//        builder.setView(linearLayout);
-////            builder.setView(edtAddress);
-//        builder.setIcon(R.drawable.ic_shopping_cart_black_24dp);
-//
-//        builder.setPositiveButton("ĐẶT HÀNG", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-////                PostMessage send = new PostMessage(Cart.getOrders(), Cart.getUID(),edtAddress.getText().toString(),edtPhone.getText().toString(),edtName.getText().toString());
-////                reference.push().setValue(send);
-//                Toast.makeText(getApplicationContext(), "Your order has been sent to our store!", Toast.LENGTH_SHORT).show();
-////                btn_place_order.setClickable(false);
-////                if (btn_place_order.isClickable())
-////                    btn_place_order.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
-////                else
-////                    btn_place_order.getBackground().setColorFilter(null);
-//            }
-//        });
-//        builder.show();
-//    }
 }
 
