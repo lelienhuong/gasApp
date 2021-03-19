@@ -3,6 +3,7 @@ package com.lh.gasapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 
 import android.annotation.SuppressLint;
@@ -17,6 +18,9 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,10 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lh.gasapp.login.saveLogin;
 import com.lh.gasapp.model.RasData;
 
 
@@ -35,6 +41,9 @@ public class Home extends AppCompatActivity {
     public static boolean isCheck = false;
     public TextView tv_gas,tv_level,tv_people,tv_status;
     private double oldData = -1;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    private saveLogin SaveSharedPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,15 +94,42 @@ public class Home extends AppCompatActivity {
                 }
 
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.example_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.logout:
+                SaveSharedPreference.setUserName(this, "");
+                startActivity(new Intent(this, MainActivity.class));
+                //code xử lý khi bấm menu1
+                break;
+//            case R.id.menu2:
+//                //code xử lý khi bấm menu2
+//                break;
+//            case R.id.menu3:
+//                //code xử lý khi bấm menu3
+//                break;
+            default:break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void notificationDialog() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
