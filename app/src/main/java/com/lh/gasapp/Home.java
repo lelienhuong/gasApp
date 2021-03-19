@@ -36,6 +36,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.login.saveLogin;
 import com.lh.gasapp.model.RasData;
 
+import java.util.Calendar;
+
 
 public class Home extends AppCompatActivity {
     public static boolean isCheck = false;
@@ -70,9 +72,10 @@ public class Home extends AppCompatActivity {
                     isCheck = false;
                     oldData = rasData.getGasData();
                 }
+
                 if(rasData.getGasData() > 400 && isCheck == false){
                     Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
-                    intent.putExtra("oldData",oldData);
+                    intent.putExtra("oldData", oldData);
                     startActivity(intent);
                     notificationDialog();
                 }
