@@ -1,9 +1,7 @@
 package com.lh.gasapp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 
 import android.annotation.SuppressLint;
@@ -11,21 +9,20 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +33,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.login.saveLogin;
 import com.lh.gasapp.model.RasData;
 
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 public class Home extends AppCompatActivity {
@@ -46,6 +46,11 @@ public class Home extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
     private saveLogin SaveSharedPreference;
+    ProgressBar progressBar;
+    Button btnChart;
+    ArrayList<Integer> gasValues = new ArrayList<>();
+    ArrayList<String> time = new ArrayList<>();
+    private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +59,9 @@ public class Home extends AppCompatActivity {
         tv_level = findViewById(R.id.tv_level);
         tv_people = findViewById(R.id.tv_people);
         tv_status = findViewById(R.id.tv_status);
+        btnChart = findViewById(R.id.btn_chart);
+        progressBar = findViewById(R.id.progress_bar);
+        progressBar.setMax(100);
         Intent intent= getIntent();
         oldData = intent.getDoubleExtra("oldData",-1);
         Log.d("OLDDATAAAAAAA", String.valueOf(oldData));
@@ -62,6 +70,10 @@ public class Home extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 RasData rasData = snapshot.getValue(RasData.class);
+                int gasValue = (int) rasData.getGasData();
+                gasValues.add(gasValue);
+                time.add(df.format(System.currentTimeMillis()));
+                Log.d("AddIntoList", "Success");
                 if(oldData == -1 ) {
                     oldData = rasData.getGasData();
                     Log.d("ol", "ok");
@@ -71,6 +83,7 @@ public class Home extends AppCompatActivity {
                 if(rasData.getGasData() != oldData){
                     isCheck = false;
                     oldData = rasData.getGasData();
+                    progressBar.setProgress((int) oldData/1023*100);
                 }
 
                 if(rasData.getGasData() > 400 && isCheck == false){
@@ -100,6 +113,17 @@ public class Home extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        btnChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Button", "Success");
+                Intent intent = new Intent(getApplicationContext(), DynamicLineChart.class);
+                intent.putExtra("gas values", gasValues);
+                intent.putExtra("time list", time);
+                startActivity(intent);
             }
         });
     }
@@ -161,6 +185,5 @@ public class Home extends AppCompatActivity {
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
     }
-
 }
 

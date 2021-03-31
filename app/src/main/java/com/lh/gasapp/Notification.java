@@ -116,15 +116,9 @@ public class Notification extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                makeCall();
-//                if (mediaPlayer.isPlaying()) {
-//                    mediaPlayer.stop();
-//                    Home.isCheck = true;
-//                    Intent intent = new Intent(getApplicationContext(), Home.class);
-//                    intent.putExtra("oldData",oldData);
-//                    startActivity(intent);
-//                    mediaPlayer.release();
-//                }
+                if(mediaPlayer.isPlaying()){
+                    makeCall();
+                }
             }
         };
         timer.start();
