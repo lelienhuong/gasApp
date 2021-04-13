@@ -103,8 +103,10 @@ public class Notification extends AppCompatActivity {
             public void onClick(View view) {
                 mediaPlayer.stop();
                 Home.isCheck = true;
+                long previous = System.currentTimeMillis();
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 intent.putExtra("oldData", oldData);
+                intent.putExtra("previous", previous);
                 startActivity(intent);
             }
         });

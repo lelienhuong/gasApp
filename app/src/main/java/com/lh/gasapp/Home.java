@@ -55,7 +55,7 @@ public class Home extends AppCompatActivity {
     ArrayList<String> time = new ArrayList<>();
     public int tong = 0;
     private boolean changed;
-    private long time1 = 0, time2 = 0;
+    private long time1 = 0, time2 = 0,previous;
     private boolean saved;
     private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
     @Override
@@ -70,6 +70,7 @@ public class Home extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         progressBar.setMax(100);
         Intent intent= getIntent();
+        previous = intent.getLongExtra("previous",0);
         oldData = intent.getDoubleExtra("oldData",-1);
         Log.d("OLDDATAAAAAAA", String.valueOf(oldData));
         //them truong hop luc chua co sẵn dữ lieu
@@ -133,8 +134,8 @@ public class Home extends AppCompatActivity {
 //                }
                 Log.d("OLDDATAAAAAAA", String.valueOf(rasData.getGasData()));
                 int gasValue = (int) rasData.getGasData();
-               // long time1 = System.currentTimeMillis();
-                if(gasValues.size() < 2 && (time2 == 0 ||  (time2 - time1) < 10000)) { // chọn khung là có 10 giá trị và thời gian thay đổi giữa 2 giá trị phải bé hơn 10s nếu ko thì sẽ được tính là không có sự biến đổi đột ngột
+
+                if(gasValues.size() < 3 && (time2 == 0 ||  (time2 - time1) < 10000)) { // chọn khung là có 10 giá trị và thời gian thay đổi giữa 2 giá trị phải bé hơn 10s nếu ko thì sẽ được tính là không có sự biến đổi đột ngột
                    Log.d("ACCEPT","ACCCEPT");
                     if(time2 != 0){
                        time1 = time2;
@@ -143,12 +144,12 @@ public class Home extends AppCompatActivity {
                     Log.d("Value", String.valueOf(gasValue));
                     tong = tong + gasValue;
                     gasValues.add(gasValue);
-                    if(gasValues.size() == 2){ //10 giá trị
-                        tong = tong/2; //chia bao nhieu gia tri
+                    if(gasValues.size() == 5){ //10 giá trị
+                        tong = tong/5; //chia bao nhieu gia tri
                         analysisValuesArrays.add(tong);
                         gasValues.clear();
                         tong = 0;
-                        if(analysisValuesArrays.size() == 3){ // đủ 3 khung
+                        if(analysisValuesArrays.size() == 5){ // đủ 3 khung
                             Log.d("GIO", String.valueOf(System.currentTimeMillis()-time1));
                             for (int i = 0; i< analysisValuesArrays.size() - 1; i++){
                                 if(analysisValuesArrays.get(i) < analysisValuesArrays.get(i+1)){
@@ -163,17 +164,21 @@ public class Home extends AppCompatActivity {
                             }else{
                                 tv_level.setText("Nguy hiểm");
                                 analysisValuesArrays.clear();
-                                Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
-                                intent.putExtra("oldData", oldData);
-                                startActivity(intent);
-                                notificationDialog();
+                                if(previous == 0 || System.currentTimeMillis() - previous > 30000 ) {
+                                    Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
+                                    intent.putExtra("oldData", oldData);
+                                    startActivity(intent);
+                                    notificationDialog();
+                                }
                             }
                         }
                     }
                 }else{
                     analysisValuesArrays.clear();
                     gasValues.clear();
+                    gasValues.add(gasValue);
                     tong = 0;
+                    tong = tong + gasValue;
                     Log.d("DENIED","ACCCEPT");
                     time1 = time2;
                 }
