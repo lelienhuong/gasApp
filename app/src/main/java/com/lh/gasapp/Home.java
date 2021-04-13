@@ -128,7 +128,6 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     private void startAlarm() {
-        Log.d("myDEBUG", "--------------------------------ALARMING");
         Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
         startActivity(alarmIntent);
     }

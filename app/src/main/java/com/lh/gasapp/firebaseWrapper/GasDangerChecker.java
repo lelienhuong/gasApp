@@ -1,91 +1,103 @@
 package com.lh.gasapp.firebaseWrapper;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class GasDangerChecker {
-    public static final int MAX_DELAY_BETWEEN_UPDATING_EVENT = 30000;
-    public static final int MAX_GAS_LIST_SIZE = 5;
-    private static final int MAX_ANALYSIS_LIST_SIZE = 3;
+    public static final int SIZE_OF_ARRAYLIST_TO_EXAMPLE = 10;
+    public static final int GAS_DANGER_THRESHOLD = 400;
 
-    private long previousTime , currentTime ;
 
     private ArrayList<Integer> gasList = new ArrayList<>();
-    private ArrayList<Double> analizeList = new ArrayList<>();
+    private ArrayList<Integer> leftMostGasList = new ArrayList<>();
+    private ArrayList<Integer> rightMostGasList = new ArrayList<>();
 
-    private int tong;
-    private double averageGasValue;
+    private int savedDangerIndex;
 
-    public GasDangerChecker(){
-        previousTime = System.currentTimeMillis();
-        currentTime = System.currentTimeMillis();
-
-    }
+    private boolean startedExampling = false;
+    private boolean isSafe = true;
 
     public boolean isNewGasValueSafe(int gasValue) {
-        updateCurrentTime();
-
-        if(notTooLongSinceLastUpdate()) {
-            addNewGasValue(gasValue);
-
-            if(gasValueListIsFull()){
-                addNewAverageValueToAnalize();
-                resetGasList();
-
-                if(analysisValuesArrayIsFull()){
-                    if(isGasAtRisk()) return false;
-                    analizeList.clear();
-                }
-            }
-        }
-        else{
-            analizeList.clear();
-            gasList.clear();
-            gasList.add(gasValue);
-            tong = gasValue;
-        }
-        previousTime = currentTime;
-        return true;
-    }
-
-    private void resetGasList() {
-        gasList.clear();
-        tong = 0;
-    }
-
-    private void addNewGasValue(int gasValue) {
         gasList.add(gasValue);
-        tong = tong + gasValue;
-    }
 
-    private boolean isGasAtRisk() {
-        for (int i = 0; i < analizeList.size() - 1; i++) {
-            if (analizeList.get(i) > analizeList.get(i + 1)) {
-                return false;
-            }
+        if(hasStartedExampling() && currentIndexIsRightMostIndex()){
+            finishExampling();
         }
-        return true;
+
+        if(gasValue > GAS_DANGER_THRESHOLD && hasNotStartedExamplingYet()){
+            startExampling();
+        }
+
+        return isSafe;
     }
 
-    private void addNewAverageValueToAnalize() {
-        averageGasValue = tong/5;
-        analizeList.add(averageGasValue);
+    private void finishExampling() {
+        saveRightMostGasList();
+        checkWhetherItIsSafeOrNot();
     }
 
-    private boolean analysisValuesArrayIsFull() {
-        return analizeList.size() == MAX_ANALYSIS_LIST_SIZE;
+    private void checkWhetherItIsSafeOrNot() {
+        float averageGasValue_left = getAverage(leftMostGasList);
+        float averageGasValue_right = getAverage(rightMostGasList);
+
+        if(averageGasValue_left < averageGasValue_right){
+            isSafe = false;
+        }
+        startedExampling = false;
     }
 
-    private boolean gasValueListIsFull() {
-        return gasList.size() == MAX_GAS_LIST_SIZE;
+    private float getAverage(ArrayList<Integer> list) {
+        float result = 0;
+        for(int  i = 0; i < list.size(); i++){
+            result += list.get(i);
+        }
+        result /= list.size();
+        return result;
     }
 
-    private boolean notTooLongSinceLastUpdate() {
-        return currentTime - previousTime <= MAX_DELAY_BETWEEN_UPDATING_EVENT;
+    private void saveRightMostGasList() {
+        int rightMostIndex = getCurrentGasIndex();
+        for(int  i = savedDangerIndex + 1 ; i <= rightMostIndex ; i++){
+            rightMostGasList.add(gasList.get(i));
+        }
     }
 
-    private void updateCurrentTime() {
-        currentTime = System.currentTimeMillis();
+    private boolean currentIndexIsRightMostIndex() {
+        return getCurrentGasIndex() - savedDangerIndex == SIZE_OF_ARRAYLIST_TO_EXAMPLE;
     }
+
+    private boolean hasNotStartedExamplingYet() {
+        return !hasStartedExampling();
+    }
+
+    private boolean hasStartedExampling() {
+        return startedExampling;
+    }
+
+    private void startExampling() {
+        savedDangerIndex = getCurrentGasIndex();
+        saveLeftMostGasList();
+
+        startedExampling = true;
+    }
+
+
+    private void saveLeftMostGasList() {
+        int leftMostIndex = getLeftMostIndex();
+        for(int  i = leftMostIndex ; i < savedDangerIndex ; i++){
+            leftMostGasList.add(gasList.get(i));
+        }
+    }
+
+    private int getLeftMostIndex() {
+        int result = getCurrentGasIndex() - SIZE_OF_ARRAYLIST_TO_EXAMPLE;
+        if(result < 0 ){
+            result = 0;
+        }
+        return result;
+    }
+
+    private int getCurrentGasIndex() {
+        return  gasList.size() - 1;
+    }
+
 }
