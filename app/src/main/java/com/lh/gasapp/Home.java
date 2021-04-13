@@ -44,7 +44,7 @@ import java.util.Map;
 public class Home extends AppCompatActivity {
     public static boolean isCheck = false;
     public TextView tv_gas,tv_level,tv_people,tv_status;
-    private double oldData = -1;
+    private double oldData = -1,oldValue = -1;
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
     private saveLogin SaveSharedPreference;
@@ -57,6 +57,9 @@ public class Home extends AppCompatActivity {
     private boolean changed;
     private long time1 = 0, time2 = 0,previous;
     private boolean saved;
+    public boolean check = false;
+    public int index = 0;
+
     private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +73,9 @@ public class Home extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         progressBar.setMax(100);
         Intent intent= getIntent();
-        previous = intent.getLongExtra("previous",0);
         oldData = intent.getDoubleExtra("oldData",-1);
         Log.d("OLDDATAAAAAAA", String.valueOf(oldData));
+
         //them truong hop luc chua co sẵn dữ lieu
 
         FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
@@ -89,9 +92,11 @@ public class Home extends AppCompatActivity {
                 if(time1 == 0) {
                     time1 = System.currentTimeMillis();
                     time2 = 0;
+                    oldValue = (int) rasData.getGasData();
                 }else{
                     time2 = System.currentTimeMillis();
                 }
+
                 //else{
 //                    isCheck = true;
 //                }
@@ -132,56 +137,132 @@ public class Home extends AppCompatActivity {
 //                    oldData = rasData.getGasData();
 //                    Log.d("ol", "ok");
 //                }
-                Log.d("OLDDATAAAAAAA", String.valueOf(rasData.getGasData()));
                 int gasValue = (int) rasData.getGasData();
-
-                if(gasValues.size() < 3 && (time2 == 0 ||  (time2 - time1) < 10000)) { // chọn khung là có 10 giá trị và thời gian thay đổi giữa 2 giá trị phải bé hơn 10s nếu ko thì sẽ được tính là không có sự biến đổi đột ngột
-                   Log.d("ACCEPT","ACCCEPT");
-                    if(time2 != 0){
-                       time1 = time2;
-                   }
-                    // time1 = 0;
-                    Log.d("Value", String.valueOf(gasValue));
-                    tong = tong + gasValue;
-                    gasValues.add(gasValue);
-                    if(gasValues.size() == 5){ //10 giá trị
-                        tong = tong/5; //chia bao nhieu gia tri
-                        analysisValuesArrays.add(tong);
-                        gasValues.clear();
-                        tong = 0;
-                        if(analysisValuesArrays.size() == 5){ // đủ 3 khung
-                            Log.d("GIO", String.valueOf(System.currentTimeMillis()-time1));
-                            for (int i = 0; i< analysisValuesArrays.size() - 1; i++){
-                                if(analysisValuesArrays.get(i) < analysisValuesArrays.get(i+1)){
+                if(gasValue > 400 && check == false){
+                    index = gasValues.size();
+                    check = true;
+                }
+                if(time2 != 0) {
+                    if(gasValues.size() - index >= 20 && check == true) {
+                        check = false;
+                        int tong = 0;
+                        int i = index - 10;
+                        if (i < 0) {
+                            i = 0;
+                            for (int j = i; j < index; j++) {
+                                tong = tong + gasValues.get(j);
+                            }
+                            tong = tong / 10; // 5 gia tri trong 1 khung
+                            analysisValuesArrays.add(tong);
+                            i = index;
+                            while (i <= index + 10) {
+                                for (int j = i; j < i + 10; j++) {
+                                    tong = tong + gasValues.get(j);
+                                }
+                                tong = tong / 10; // 5 gia tri trong 1 khung
+                                analysisValuesArrays.add(tong);
+                                i = i + 10;
+                            }
+                        } else {
+                            while (i <= index + 10) {
+                                for (int j = i; j < i + 10; j++) {
+                                    tong = tong + gasValues.get(j);
+                                }
+                                tong = tong / 10; // 5 gia tri trong 1 khung
+                                analysisValuesArrays.add(tong);
+                                i = i + 10;
+                            }
+                        }
+                            for (int k = 0; k < analysisValuesArrays.size() - 1; k++) {
+                                if (analysisValuesArrays.get(k) < analysisValuesArrays.get(k + 1)) {
                                     continue;
-                                }else{
+                                } else {
                                     analysisValuesArrays.clear();
                                     break;
                                 }
                             }
-                            if(analysisValuesArrays.size() == 0){
+                            if (analysisValuesArrays.size() == 0) {
                                 tv_level.setText("Bình thường");
-                            }else{
+                            } else {
                                 tv_level.setText("Nguy hiểm");
                                 analysisValuesArrays.clear();
-                                if(previous == 0 || System.currentTimeMillis() - previous > 30000 ) {
+                                previous = intent.getLongExtra("previous",0);
+                                Log.d("ONGNOIDAY", String.valueOf(previous));
+                                 long currentTime = System.currentTimeMillis() - previous;
+                                Log.d("Previous", String.valueOf(currentTime));
+                                if (previous == 0 ||  currentTime > 30000) {
                                     Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
                                     intent.putExtra("oldData", oldData);
                                     startActivity(intent);
                                     notificationDialog();
                                 }
                             }
-                        }
                     }
-                }else{
-                    analysisValuesArrays.clear();
-                    gasValues.clear();
-                    gasValues.add(gasValue);
-                    tong = 0;
-                    tong = tong + gasValue;
-                    Log.d("DENIED","ACCCEPT");
+//                    if(gasValue > 400 && check == false){
+//                        index = gasValues.size();
+//                        check = true;
+//                    }
+//                    if(check){
+//                        int soluong = (int) (time2 - time1);
+//                        for (int i = 1; i <= soluong; i++) {
+//                            gasValues.add(gasValue);
+//                        }
+//                    }
+                    int soluong = (int) (time2 - time1)/1000;
+                    for (int i = 1; i <= soluong; i++) {
+                        gasValues.add((int) oldValue);
+                    }
+                    oldValue = gasValue;
                     time1 = time2;
+                    Log.d("MANG", String.valueOf(gasValues));
                 }
+//                if(gasValues.size() < 2 && (time2 == 0 ||  (time2 - time1) < 10000)) { // chọn khung là có 10 giá trị và thời gian thay đổi giữa 2 giá trị phải bé hơn 10s nếu ko thì sẽ được tính là không có sự biến đổi đột ngột
+//                   Log.d("ACCEPT","ACCCEPT");
+//                    if(time2 != 0){
+//                       time1 = time2;
+//                   }
+//                    // time1 = 0;
+//                    Log.d("Value", String.valueOf(gasValue));
+//                    tong = tong + gasValue;
+//                    gasValues.add(gasValue);
+//                    if(gasValues.size() == 2){ //10 giá trị
+//                        tong = tong/2; //chia bao nhieu gia tri
+//                        analysisValuesArrays.add(tong);
+//                        gasValues.clear();
+//                        tong = 0;
+//                        if(analysisValuesArrays.size() == 3){ // đủ 3 khung
+//                            Log.d("GIO", String.valueOf(System.currentTimeMillis()-time1));
+//                            for (int i = 0; i< analysisValuesArrays.size() - 1; i++){
+//                                if(analysisValuesArrays.get(i) < analysisValuesArrays.get(i+1)){
+//                                    continue;
+//                                }else{
+//                                    analysisValuesArrays.clear();
+//                                    break;
+//                                }
+//                            }
+//                            if(analysisValuesArrays.size() == 0){
+//                                tv_level.setText("Bình thường");
+//                            }else{
+//                                tv_level.setText("Nguy hiểm");
+//                                analysisValuesArrays.clear();
+//                                if(previous == 0 || System.currentTimeMillis() - previous > 30000 ) {
+//                                    Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
+//                                    intent.putExtra("oldData", oldData);
+//                                    startActivity(intent);
+//                                    notificationDialog();
+//                                }
+//                            }
+//                        }
+//                    }
+//                }else{
+//                    analysisValuesArrays.clear();
+//                    gasValues.clear();
+//                    gasValues.add(gasValue);
+//                    tong = 0;
+//                    tong = tong + gasValue;
+//                    Log.d("DENIED","ACCCEPT");
+//                    time1 = time2;
+//                }
 
 
 //                int i = 1;

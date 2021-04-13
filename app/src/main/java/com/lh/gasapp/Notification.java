@@ -107,6 +107,7 @@ public class Notification extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 intent.putExtra("oldData", oldData);
                 intent.putExtra("previous", previous);
+                Log.d("ONGNOIMI", String.valueOf(previous));
                 startActivity(intent);
             }
         });
