@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.login.saveLogin;
 import com.lh.gasapp.model.RasData;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,12 @@ public class Home extends AppCompatActivity {
     ProgressBar progressBar;
     Button btnChart;
     ArrayList<Integer> gasValues = new ArrayList<>();
+    ArrayList<Integer> analysisValuesArrays = new ArrayList<>();
     ArrayList<String> time = new ArrayList<>();
+    public int tong = 0;
+    private boolean changed;
+    private long time1 = 0, time2 = 0;
+    private boolean saved;
     private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,38 +73,50 @@ public class Home extends AppCompatActivity {
         oldData = intent.getDoubleExtra("oldData",-1);
         Log.d("OLDDATAAAAAAA", String.valueOf(oldData));
         //them truong hop luc chua co sẵn dữ lieu
+
         FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 RasData rasData = snapshot.getValue(RasData.class);
-                int gasValue = (int) rasData.getGasData();
-                gasValues.add(gasValue);
-                time.add(df.format(System.currentTimeMillis()));
-                Log.d("AddIntoList", "Success");
-                if(oldData == -1 ) {
-                    oldData = rasData.getGasData();
-                    Log.d("ol", "ok");
-                }else{
-                    isCheck = true;
-                }
-                if(rasData.getGasData() != oldData){
-                    isCheck = false;
-                    oldData = rasData.getGasData();
-                    progressBar.setProgress((int) oldData/1023*100);
-                }
+                double value = rasData.getGasData();
+//                Log.d("AddIntoList", String.valueOf((value/1023)*100));
+                progressBar.setProgress((int) ((value)/1023*100));
 
-                if(rasData.getGasData() > 400 && isCheck == false){
-                    Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
-                    intent.putExtra("oldData", oldData);
-                    startActivity(intent);
-                    notificationDialog();
+//                progressBar.setProgress((int) ((rasData.getGasData())/1023*100));
+                time.add(df.format(System.currentTimeMillis()));
+
+                if(time1 == 0) {
+                    time1 = System.currentTimeMillis();
+                    time2 = 0;
+                }else{
+                    time2 = System.currentTimeMillis();
                 }
+                //else{
+//                    isCheck = true;
+//                }
+//                if(rasData.getGasData() != oldData){
+//                    isCheck = false;
+//                    oldData = rasData.getGasData();
+//                    progressBar.setProgress((int) oldData/1023*100);
+//                }
+//                if(rasData.getGasData() > 400 && isCheck == false){
+//                    Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
+//                    intent.putExtra("oldData", oldData);
+//                    startActivity(intent);
+//                    notificationDialog();
+//                }
                 tv_gas.setText(String.valueOf(rasData.getGasData()));
                 if(rasData.getGasData() > 400){
                     tv_level.setText("Nguy hiểm");
                 }else{
                     tv_level.setText("Bình thường");
                 }
+//                tv_level.setText("Bình thường");
+//                if(rasData.getGasData() > 400){
+//                    tv_level.setText("Nguy hiểm");
+//                }else{
+//                    tv_level.setText("Bình thường");
+//                }
                 if(rasData.isPeople()){ //true la co nguoi
                     tv_people.setText("Có người trong khu vực");
                 }else{
@@ -108,6 +127,87 @@ public class Home extends AppCompatActivity {
                 }else{
                     tv_status.setText("Không bình thường");
                 }
+//                if(oldData == -1 ) {
+//                    oldData = rasData.getGasData();
+//                    Log.d("ol", "ok");
+//                }
+                Log.d("OLDDATAAAAAAA", String.valueOf(rasData.getGasData()));
+                int gasValue = (int) rasData.getGasData();
+               // long time1 = System.currentTimeMillis();
+                if(gasValues.size() < 2 && (time2 == 0 ||  (time2 - time1) < 10000)) { // chọn khung là có 10 giá trị và thời gian thay đổi giữa 2 giá trị phải bé hơn 10s nếu ko thì sẽ được tính là không có sự biến đổi đột ngột
+                   Log.d("ACCEPT","ACCCEPT");
+                    if(time2 != 0){
+                       time1 = time2;
+                   }
+                    // time1 = 0;
+                    Log.d("Value", String.valueOf(gasValue));
+                    tong = tong + gasValue;
+                    gasValues.add(gasValue);
+                    if(gasValues.size() == 2){ //10 giá trị
+                        tong = tong/2; //chia bao nhieu gia tri
+                        analysisValuesArrays.add(tong);
+                        gasValues.clear();
+                        tong = 0;
+                        if(analysisValuesArrays.size() == 3){ // đủ 3 khung
+                            Log.d("GIO", String.valueOf(System.currentTimeMillis()-time1));
+                            for (int i = 0; i< analysisValuesArrays.size() - 1; i++){
+                                if(analysisValuesArrays.get(i) < analysisValuesArrays.get(i+1)){
+                                    continue;
+                                }else{
+                                    analysisValuesArrays.clear();
+                                    break;
+                                }
+                            }
+                            if(analysisValuesArrays.size() == 0){
+                                tv_level.setText("Bình thường");
+                            }else{
+                                tv_level.setText("Nguy hiểm");
+                                analysisValuesArrays.clear();
+                                Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
+                                intent.putExtra("oldData", oldData);
+                                startActivity(intent);
+                                notificationDialog();
+                            }
+                        }
+                    }
+                }else{
+                    analysisValuesArrays.clear();
+                    gasValues.clear();
+                    tong = 0;
+                    Log.d("DENIED","ACCCEPT");
+                    time1 = time2;
+                }
+
+
+//                int i = 1;
+//                while(i <= 10){
+//                    int j = 1;
+//                    while (j <= 2){
+//                        FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                RasData rasData = snapshot.getValue(RasData.class);
+//                                //Log.d("LIENHUONG", "huongggggg");
+//                                Log.d("LIENHUONG", String.valueOf(rasData.getGasData()));
+//                            }
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError error) {
+//
+//                            }
+//                        });
+//
+//                        j = j + 1;
+//                    }
+//                    i = i + 1;
+////                    if(i == 10){
+////                        i = 1;
+////                    }
+////                    sapXep();
+////                    i = i + 1;
+////                    if(i == 10){
+////                        i = 1;
+////                    }
+//                }
 
             }
             @Override
@@ -126,6 +226,20 @@ public class Home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    public void sapXep(){
+            CountDownTimer timer = new CountDownTimer(2000, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    Log.d("LIENHUONG", "huongggggg");
+                }
+
+                @Override
+                public void onFinish() {
+                }
+            };
+            timer.start();
     }
 
     @Override
