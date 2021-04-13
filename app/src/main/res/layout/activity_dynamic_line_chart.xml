@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DynamicLineChart">
+    tools:context=".chart.DynamicLineChart">
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/dynamic_chart"
         android:layout_width="match_parent"

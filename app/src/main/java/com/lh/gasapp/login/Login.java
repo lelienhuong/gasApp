@@ -28,90 +28,55 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lh.gasapp.Home;
-import com.lh.gasapp.MainActivity;
 import com.lh.gasapp.R;
 import com.lh.gasapp.SignUp;
 
 public class Login extends AppCompatActivity {
-    EditText email, pass;
-    TextView tv_register,sign_gg;
-    Button btn_login;
+    EditText textfield_email, textfield_password;
+    TextView tv_register, sign_gg;
+    Button button_login;
     FirebaseAuth fAuth;
-    private static final String TAG="";
+    private static final String TAG = "";
     private int RC_SIGN_IN;
     private GoogleSignInClient mGoogleSignInClient;
     private saveLogin SaveSharedPreference;
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_login);
-//    }
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_login);
-    FirebaseApp.initializeApp(this);
-    fAuth = FirebaseAuth.getInstance();
-    GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        FirebaseApp.initializeApp(this);
+        fAuth = FirebaseAuth.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         add();
-//    if(SaveSharedPreference.getUserName(Login.this).length() == 0)
-//    {
-//        // call Login Activity
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build();
-//
-//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-//        add();
-//    }
-//    else
-//    {
-//        // Stay at the current activity.
-//        startActivity(new Intent(getApplicationContext(), Home.class));
-//    }
-
-}
+    }
 
     private void add() {
-        email=findViewById(R.id.email2);
-        pass=findViewById(R.id.pass2);
-        fAuth= FirebaseAuth.getInstance();
-        tv_register=findViewById(R.id.tv_register);
-        btn_login=findViewById(R.id.button2);
-        sign_gg=findViewById(R.id.sign_gg2);
+        textfield_email = findViewById(R.id.textfield_email);
+        textfield_password = findViewById(R.id.textfield_password);
+        fAuth = FirebaseAuth.getInstance();
+        tv_register = findViewById(R.id.tv_register);
+        button_login = findViewById(R.id.button_login);
+        sign_gg = findViewById(R.id.sign_gg2);
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        button_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email_1=email.getText().toString();
-                String pass_1=pass.getText().toString();
-                if(TextUtils.isEmpty(email_1))
-                {
-                    email.setError("Require Input Email!!");
+                String email = textfield_email.getText().toString();
+                String password = textfield_password.getText().toString();
+                if (TextUtils.isEmpty(email)) {
+                    textfield_email.setError("Require Input Email!!");
                     return;
                 }
-                if(TextUtils.isEmpty(pass_1))
-                {
-                    pass.setError("Require Input Password!!");
+                if (TextUtils.isEmpty(password)) {
+                    textfield_password.setError("Require Input Password!!");
                     return;
                 }
-//                fAuth.signInWithEmailAndPassword(email_1,pass_1).addOnCompleteListener(task -> {
-//                    if(task.isSuccessful())
-//                    {
-//                        Toast.makeText(MainActivity.this, "Login success!!", Toast.LENGTH_LONG).show();
-//                        startActivity(new Intent(getApplicationContext(), Home.class));
-//                    }
-//                    else{
-//                        Toast.makeText(MainActivity.this, "Login again!", Toast.LENGTH_LONG).show();
-//                    }
-//                });
-                login(email_1, pass_1);
+                login(email, password);
             }
         });
         sign_gg.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +102,7 @@ protected void onCreate(Bundle savedInstanceState) {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN){
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
@@ -159,7 +124,7 @@ protected void onCreate(Bundle savedInstanceState) {
         fAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(Login.this, "Successful", Toast.LENGTH_SHORT).show();
                     FirebaseUser user = fAuth.getCurrentUser();
                     startActivity(new Intent(getApplicationContext(), Home.class));
@@ -176,13 +141,13 @@ protected void onCreate(Bundle savedInstanceState) {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             // Login w/ correct information
                             FirebaseUser user = fAuth.getCurrentUser();
                             SaveSharedPreference.setUserName(getApplicationContext(), FirebaseAuth.getInstance().getUid());
                             startActivity(new Intent(getApplicationContext(), Home.class));
                             // TODO: update UI when success sign in
-                        }else{
+                        } else {
                             // login fail
                             Toast.makeText(Login.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();

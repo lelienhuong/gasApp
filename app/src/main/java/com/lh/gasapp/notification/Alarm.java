@@ -1,4 +1,4 @@
-package com.lh.gasapp;
+package com.lh.gasapp.notification;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -21,12 +21,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.lh.gasapp.Home;
+import com.lh.gasapp.R;
+
 import java.time.LocalTime;
 import java.util.Date;
 
-public class Notification extends AppCompatActivity {
+public class Alarm extends AppCompatActivity {
     private Button btn;
     private static final int PERMISSION_REQUEST_CODE = 1;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,74 +46,20 @@ public class Notification extends AppCompatActivity {
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-//        LocalTime timeStart = LocalTime.now();
-//      Date date2 = null;
+
         MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.warning);
-
-               mediaPlayer.start();
-
-//        long diff = date2.getTime() - date.getTime();
-//
-//        long diffSeconds = diff / 1000;
-//
-//        long diffMinutes = diff / (60 * 1000);
-//
-//        long diffHours = diff / (60 * 60 * 1000);
-         //   makeCall();
-//        String dial = "tel:" + "+84764690776";
-//        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(dial)));
-            // Important: have to do the following in order to show without unlocking
-
-            btn = findViewById(R.id.music_stop);
-            Intent intent = getIntent();
-            Double oldData = intent.getDoubleExtra("oldData", -1);
-//            Handler handler = new Handler();
-//            handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    mediaPlayer.stop();
-//                    Home.isCheck = true;
-//                    Intent intent = new Intent(getApplicationContext(), Home.class);
-//                    intent.putExtra("oldData", oldData);
-//                    startActivity(intent);
-//                }
-//            });
-////            while(LocalTime.now().getMinute() - timeStart.getMinute() < 2) {
-////                Log.d("HELLLOOO", "HIIIIIIIII");
-////            }
-////               makeCall();
-////        int time = 5*3600; //trong 5 ph
-////        try {
-////            Thread.sleep(5*3600);
-////        } catch (InterruptedException e) {
-////            e.printStackTrace();
-////        }
-////        makeCall();
-////            if(LocalTime.now().getMinute() - timeStart.getMinute() < 2){
-////                finish();
-////                Log.d("Huong","OKKKKKK");
-////                startActivity(getIntent());
-////            }else {
-////                makeCall();
-////            }
-//            }
-//        }, 60000);
-//            makeCall();
+        mediaPlayer.start();
+        btn = findViewById(R.id.music_stop);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mediaPlayer.stop();
-                Home.isCheck = true;
                 long previous = System.currentTimeMillis();
                 Intent intent = new Intent(getApplicationContext(), Home.class);
-                intent.putExtra("oldData", oldData);
-                intent.putExtra("previous", previous);
                 startActivity(intent);
             }
         });
+
         CountDownTimer timer = new CountDownTimer(10000, 1000) {
 
             @Override
@@ -118,7 +68,7 @@ public class Notification extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     makeCall();
                 }
             }
@@ -127,23 +77,21 @@ public class Notification extends AppCompatActivity {
     }
 
 
-
-
-    public void makeCall(){
+    public void makeCall() {
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setData(Uri.parse("tel:" + "0764690776"));
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
-        if (result == PackageManager.PERMISSION_GRANTED){
+        if (result == PackageManager.PERMISSION_GRANTED) {
             startActivity(intent);
         } else {
             requestPermission();
         }
     }
 
-    private void requestPermission(){
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CALL_PHONE)){}
-        else {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CALL_PHONE},PERMISSION_REQUEST_CODE);
+    private void requestPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_REQUEST_CODE);
         }
     }
 
