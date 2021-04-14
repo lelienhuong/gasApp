@@ -14,18 +14,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.lh.gasapp.Home;
+import com.lh.gasapp.homeActivity.Home;
 import com.lh.gasapp.R;
-
-import java.time.LocalTime;
-import java.util.Date;
 
 public class Alarm extends AppCompatActivity {
     private Button btn;
