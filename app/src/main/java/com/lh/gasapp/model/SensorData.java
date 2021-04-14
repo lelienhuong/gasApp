@@ -1,34 +1,35 @@
 package com.lh.gasapp.model;
 
-public class RasData {
-    private long gasData;
+public class SensorData {
+    private int gasData;
     private boolean people;
     private boolean statusHuman;
 
-    public RasData(){
+    public SensorData(){
 
     }
-    public RasData(RasData targetProductToCopyFrom) {
+
+    public SensorData(SensorData targetProductToCopyFrom) {
         this.gasData = targetProductToCopyFrom.gasData;
         this.people = targetProductToCopyFrom.people;
         this.statusHuman = targetProductToCopyFrom.statusHuman;
     }
 
-    public RasData(long gasData, boolean people, boolean statusHuman) {
+    public SensorData(int gasData, boolean people, boolean statusHuman) {
         this.gasData = gasData;
         this.people = people;
         this.statusHuman = statusHuman;
     }
 
-    public long getGasData() {
+    public int getGasData() {
         return gasData;
     }
 
-    public void setGasData(long gasData) {
+    public void setGasData(int gasData) {
         this.gasData = gasData;
     }
 
-    public boolean isPeople() {
+    public boolean isPeoplePresented() {
         return people;
     }
 
@@ -36,11 +37,4 @@ public class RasData {
         this.people = people;
     }
 
-    public boolean isStatusHuman() {
-        return statusHuman;
-    }
-
-    public void setStatusHuman(boolean statusHuman) {
-        this.statusHuman = statusHuman;
-    }
 }

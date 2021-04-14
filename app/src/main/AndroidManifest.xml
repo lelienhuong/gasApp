@@ -11,12 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DynamicLineChart"
-            android:parentActivityName=".Home">
+        <activity android:name=".chart.DynamicLineChartActivity"
+            android:parentActivityName=".homeActivity.Home">
         </activity>
         <activity android:name=".login.Login" />
-        <activity android:name=".Notification" />
-        <activity android:name=".Home" />
+        <activity android:name=".notification.Alarm" />
+        <activity android:name=".homeActivity.Home" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "785478988135-6l6ud6smejp4e88no14kegeduhinhuf9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lh.gasapp",
+            "certificate_hash": "ee95074572ed1958b92ebf0c226fc6368a00558e"
+          }
+        },
+        {
           "client_id": "785478988135-vfpd77v0qf3ed93avvkhmfdp5bmg3uda.apps.googleusercontent.com",
           "client_type": 3
         }

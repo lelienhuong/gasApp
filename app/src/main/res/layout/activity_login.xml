@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/email2"
+        android:id="@+id/textfield_email"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="322dp"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="@+id/shopnow" />
 
     <EditText
-        android:id="@+id/pass2"
+        android:id="@+id/textfield_password"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -49,10 +49,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email2" />
+        app:layout_constraintTop_toBottomOf="@+id/textfield_email" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button_login"
         android:layout_width="124dp"
         android:layout_height="34dp"
         android:background="#3F51B5"
@@ -62,7 +62,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pass2"
+        app:layout_constraintTop_toBottomOf="@+id/textfield_password"
         app:layout_constraintVertical_bias="0.04000002" />
 
     <TextView
@@ -77,7 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2"
+        app:layout_constraintTop_toBottomOf="@+id/button_login"
         app:layout_constraintVertical_bias="0.656" />
 
     <TextView
