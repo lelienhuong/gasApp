@@ -45,7 +45,7 @@ public class Alarm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
-     //   gasValues = getIntent().getIntegerArrayListExtra("gasValues");
+      boolean isRunningState  = getIntent().getBooleanExtra("stateRunningAlarm",false);
         MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.warning);
         mediaPlayer.start();
         btn = findViewById(R.id.music_stop);
@@ -56,6 +56,7 @@ public class Alarm extends AppCompatActivity {
                 long previousTime = System.currentTimeMillis();
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 intent.putExtra("previousTime", previousTime);
+                intent.putExtra("stateRunningAlarm", isRunningState);
                 intent.putIntegerArrayListExtra("gasValues", MyValueEventListener.gasValues);
                 startActivity(intent);
             }

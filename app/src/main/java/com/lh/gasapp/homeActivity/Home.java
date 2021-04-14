@@ -41,12 +41,14 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     private ButtonActionListener buttonListener_showChartOnClick;
     private boolean isRunningAlarm = true;
     public ArrayList<Integer> gasValues = new ArrayList<Integer>();
+    public long previousTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         gasValues = getIntent().getIntegerArrayListExtra("gasValues");
-        permissionToAlarm();
+        isRunningAlarm = getIntent().getBooleanExtra("stateRunningAlarm",true);
+        previousTime = getIntent().getLongExtra("previousTime",-1);
 
         tv_gas = findViewById(R.id.tv_gas);
         tv_gasLevel = findViewById(R.id.tv_gasLevel);
@@ -60,11 +62,10 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     private void permissionToAlarm() {
-        long previousTime = getIntent().getLongExtra("previousTime",-1);
         if(previousTime != -1){
             long currentTime = System.currentTimeMillis();
             long time_since_alarm_closed_before = currentTime - previousTime;
-            if(time_since_alarm_closed_before > 30000){
+            if(time_since_alarm_closed_before > 60000){
                 isRunningAlarm = true;
             }
         }
@@ -110,11 +111,12 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     public void startAlarm() {
+        permissionToAlarm();
         if(isRunningAlarm) {
             isRunningAlarm = false;
             Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
+            alarmIntent.putExtra("stateRunningAlarm", isRunningAlarm);
             startActivity(alarmIntent);
-
         }
     }
 

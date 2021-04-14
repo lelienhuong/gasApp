@@ -41,8 +41,6 @@ public class MyValueEventListener implements ValueEventListener {
     public void onDataChange(@NonNull DataSnapshot snapshot) {
         SensorData sensorData = snapshot.getValue(SensorData.class);
         notifyGasValueChanged(sensorData);
-//        notifyHumanDetectionStatus(sensorData);
-//        notifyNewPointInTime();
     }
 
     private void notifyGasValueChanged(SensorData sensorData) {
