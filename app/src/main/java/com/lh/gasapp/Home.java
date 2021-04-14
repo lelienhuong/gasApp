@@ -55,7 +55,7 @@ public class Home extends AppCompatActivity {
     ArrayList<String> time = new ArrayList<>();
     public int tong = 0;
     private boolean changed;
-    private long time1 = 0, time2 = 0,previous;
+    private long time1 = 0, time2 = 0,previous = 0;
     private boolean saved;
     public boolean check = false;
     public int index = 0;
@@ -75,7 +75,7 @@ public class Home extends AppCompatActivity {
         Intent intent= getIntent();
         oldData = intent.getDoubleExtra("oldData",-1);
         Log.d("OLDDATAAAAAAA", String.valueOf(oldData));
-
+        previous = intent.getLongExtra("previous",0);
         //them truong hop luc chua co sẵn dữ lieu
 
         FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
@@ -186,11 +186,11 @@ public class Home extends AppCompatActivity {
                             } else {
                                 tv_level.setText("Nguy hiểm");
                                 analysisValuesArrays.clear();
-                                previous = intent.getLongExtra("previous",0);
-                                Log.d("ONGNOIDAY", String.valueOf(previous));
+                             //   previous = intent.getLongExtra("previous",0);
                                  long currentTime = System.currentTimeMillis() - previous;
                                 Log.d("Previous", String.valueOf(currentTime));
-                                if (previous == 0 ||  currentTime > 30000) {
+                                if (previous == 0 ||  currentTime > 50000) {
+                                    Log.d("ONGNOIDAY", String.valueOf(previous));
                                     Intent intent = new Intent(getApplicationContext(), com.lh.gasapp.Notification.class);
                                     intent.putExtra("oldData", oldData);
                                     startActivity(intent);
@@ -214,7 +214,7 @@ public class Home extends AppCompatActivity {
                     }
                     oldValue = gasValue;
                     time1 = time2;
-                    Log.d("MANG", String.valueOf(gasValues));
+                    Log.d("MANG", String.valueOf(gasValues) + "va size: "+ gasValues.size());
                 }
 //                if(gasValues.size() < 2 && (time2 == 0 ||  (time2 - time1) < 10000)) { // chọn khung là có 10 giá trị và thời gian thay đổi giữa 2 giá trị phải bé hơn 10s nếu ko thì sẽ được tính là không có sự biến đổi đột ngột
 //                   Log.d("ACCEPT","ACCCEPT");

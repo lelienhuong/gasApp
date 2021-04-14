@@ -27,6 +27,7 @@ import java.util.Date;
 public class Notification extends AppCompatActivity {
     private Button btn;
     private static final int PERMISSION_REQUEST_CODE = 1;
+    public long previous;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class Notification extends AppCompatActivity {
             public void onClick(View view) {
                 mediaPlayer.stop();
                 Home.isCheck = true;
-                long previous = System.currentTimeMillis();
+                previous = System.currentTimeMillis();
                 Intent intent = new Intent(getApplicationContext(), Home.class);
                 intent.putExtra("oldData", oldData);
                 intent.putExtra("previous", previous);
