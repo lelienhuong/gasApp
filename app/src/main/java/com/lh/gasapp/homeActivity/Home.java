@@ -1,33 +1,23 @@
-package com.lh.gasapp;
+package com.lh.gasapp.homeActivity;
 
-import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.lh.gasapp.chart.DynamicLineChart;
-import com.lh.gasapp.firebaseWrapper.MyValueEventListener;
+import com.lh.gasapp.MainActivity;
+import com.lh.gasapp.R;
+import com.lh.gasapp.SensorValueDisplayer;
+import com.lh.gasapp.firebase.FirebaseWrapper;
+import com.lh.gasapp.firebase.valueEventListener.MyValueEventListener;
 import com.lh.gasapp.login.saveLogin;
 import com.lh.gasapp.notification.Alarm;
 
@@ -40,13 +30,14 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     private ProgressBar progressBar;
     private Button button_showChart;
 
-    private String userId = "ERL43dCv3RXCMy8LRLzyIt6WtLH3";
     private DatabaseReference firebaseReference;
-    private MyValueEventListener myValueEventListener;
+
+    protected MyValueEventListener myValueEventListener;
     private saveLogin SaveSharedPreference;
 
-    private ArrayList<String> formattedTimeList = new ArrayList<>();
+    protected ArrayList<String> timeList = new ArrayList<>();
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+    private ButtonActionListener buttonListener_showChartOnClick;
 
 
     @Override
@@ -57,32 +48,27 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
         tv_gas = findViewById(R.id.tv_gas);
         tv_gasLevel = findViewById(R.id.tv_gasLevel);
         tv_peoplePresentStatus = findViewById(R.id.tv_people);
-        button_showChart = findViewById(R.id.button_showChart);
+
         progressBar = findViewById(R.id.progress_bar);
         progressBar.setMax(100);
 
+        initFireBaseListener();
+        initButton();
+    }
+
+    private void initFireBaseListener() {
         myValueEventListener = new MyValueEventListener();
         myValueEventListener.attachValueDisplayer(this);
 
-        //userId = FirebaseAuth.getInstance().getUid());
-        firebaseReference = FirebaseDatabase.getInstance().getReference(userId);
+        firebaseReference = FirebaseWrapper.getReferrence();
         firebaseReference.addValueEventListener(myValueEventListener);
+    }
 
+    private void initButton() {
+        button_showChart = findViewById(R.id.button_showChart);
 
-        button_showChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Button", "Success");
-                showChart();
-            }
-
-            private void showChart() {
-                Intent intent = new Intent(getApplicationContext(), DynamicLineChart.class);
-                intent.putExtra("gas values", myValueEventListener.getGasValues());
-                intent.putExtra("time list", formattedTimeList);
-                startActivity(intent);
-            }
-        });
+        buttonListener_showChartOnClick = new ButtonActionListener(this);
+        button_showChart.setOnClickListener(buttonListener_showChartOnClick);
     }
 
     @Override
@@ -92,23 +78,6 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            case R.id.logout:
-                SaveSharedPreference.setUserName(this, "");
-                startActivity(new Intent(this, MainActivity.class));
-                break;
-
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void notifyGasValueChanged(int gasValue) {
@@ -118,7 +87,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
 
     @Override
     public void notifyNewPointInTime() {
-        formattedTimeList.add(simpleDateFormat.format(System.currentTimeMillis()));
+        timeList.add(simpleDateFormat.format(System.currentTimeMillis()));
     }
 
     @Override
@@ -148,6 +117,23 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            case R.id.logout:
+                SaveSharedPreference.setUserName(this, "");
+                startActivity(new Intent(this, MainActivity.class));
+                break;
+
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }
 

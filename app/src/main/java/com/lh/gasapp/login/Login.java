@@ -27,7 +27,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.lh.gasapp.Home;
+import com.lh.gasapp.homeActivity.Home;
 import com.lh.gasapp.R;
 import com.lh.gasapp.SignUp;
 

@@ -1,6 +1,4 @@
-package com.lh.gasapp.firebaseWrapper;
-
-import android.util.Log;
+package com.lh.gasapp.firebase.valueEventListener;
 
 import androidx.annotation.NonNull;
 
@@ -9,6 +7,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.SensorValueDisplayer;
 import com.lh.gasapp.model.SensorData;
+import com.lh.gasapp.utils.GasDangerChecker;
 
 import java.util.ArrayList;
 
@@ -62,7 +61,7 @@ public class MyValueEventListener implements ValueEventListener {
         sensorValueDisplayer.notifyNewPointInTime();
     }
 
-    public ArrayList<Integer> getGasValues() {
+    public ArrayList<Integer> getGasList() {
         return gasValueList;
     }
 

@@ -4,11 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.lh.gasapp.firebaseWrapper.MyValueEventListener;
-import com.lh.gasapp.login.Login;
+import com.lh.gasapp.homeActivity.Home;
 import com.lh.gasapp.login.saveLogin;
 
 public class MainActivity extends AppCompatActivity {
