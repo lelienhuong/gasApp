@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.SensorValueDisplayer;
 import com.lh.gasapp.model.SensorData;
@@ -27,6 +28,7 @@ public class MyValueEventListener implements ValueEventListener {
     public boolean check = false;
     public int index = 0;
     public static ArrayList<Integer> gasValues = new ArrayList<Integer>();
+
     ArrayList<Integer> analysisValuesArrays = new ArrayList<>();
 
     public MyValueEventListener() {
@@ -40,32 +42,47 @@ public class MyValueEventListener implements ValueEventListener {
     @Override
     public void onDataChange(@NonNull DataSnapshot snapshot) {
         SensorData sensorData = snapshot.getValue(SensorData.class);
+        for (DataSnapshot data: snapshot.child("gasValue_recent").getChildren())
+        {
+//            String key=data.getKey();
+            int value=Integer.parseInt(data.getValue().toString());
+            gasValues.add(value);
+        }
+            Log.d("IDDDD", String.valueOf(gasValues));
+
         notifyGasValueChanged(sensorData);
     }
 
     private void notifyGasValueChanged(SensorData sensorData) {
-        gasValue = sensorData.getGasData();
+
+ //       String keyID = FirebaseDatabase.getInstance().getReference().child("ERL43dCv3RXCMy8LRLzyIt6WtLH3").child("gasArray").push().getKey();
+   //     Log.d("IDDDD",keyID);
+//        gasValues = sensorData.getGasArray();
+        Log.d("MANGTEST", String.valueOf(sensorData.getGasArray()));
+//        gasValue = sensorData.getGasData();
+        gasValue = gasValues.get(gasValues.size()-1);
         sensorValueDisplayer.notifyGasValueChanged(gasValue);
         double value = sensorData.getGasData();
-        if(time1 == 0) {
-            time1 = System.currentTimeMillis();
-            time2 = 0;
-            oldValue = (int) sensorData.getGasData();
-        }else{
-            time2 = System.currentTimeMillis();
-        }
-        if(sensorData.getGasData() > 400){
+//        if(time1 == 0) {
+//            time1 = System.currentTimeMillis();
+//            time2 = 0;
+//            oldValue = (int) sensorData.getGasData();
+//        }else{
+//            time2 = System.currentTimeMillis();
+//        }
+        if(gasValues.get(gasValues.size()-1) > 400){
+            Log.d("Giatri", String.valueOf(gasValues.get(gasValues.size()-1)));
             sensorValueDisplayer.notifyGasStatusNotSafe();
         }else{
             sensorValueDisplayer.notifyGasStatusSafe();
         }
         notifyHumanDetectionStatus(sensorData);
-        int gasValue = (int) sensorData.getGasData();
+//        int gasValue = (int) sensorData.getGasData();
         if(gasValue > 400 && check == false){
             index = gasValues.size();
-            check = true;
+               check = true;
         }
-        if(time2 != 0) {
+//        if(time2 != 0) {
             if(gasValues.size() - index >= 20 && check == true) {
                 check = false;
                 int tong = 0;
@@ -112,14 +129,14 @@ public class MyValueEventListener implements ValueEventListener {
                     sensorValueDisplayer.startAlarm();
                 }
             }
-            int soluong = (int) (time2 - time1)/1000;
-            for (int i = 1; i <= soluong; i++) {
-                gasValues.add((int) oldValue);
-            }
-            oldValue = gasValue;
-            time1 = time2;
+//            int soluong = (int) (time2 - time1)/1000;
+//            for (int i = 1; i <= soluong; i++) {
+//                gasValues.add((int) oldValue);
+//            }
+//            oldValue = gasValue;
+//            time1 = time2;
 //            Log.d("MANG", String.valueOf(gasValues));
-        }
+//        }
     }
 
     private void notifyHumanDetectionStatus(SensorData sensorData) {

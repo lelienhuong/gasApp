@@ -1,10 +1,12 @@
 package com.lh.gasapp.model;
 
+import java.util.ArrayList;
+
 public class SensorData {
     private int gasData;
     private boolean people;
     private boolean statusHuman;
-
+    private ArrayList<Integer> gasValue_recent = new ArrayList<Integer>();
     public SensorData(){
 
     }
@@ -13,12 +15,14 @@ public class SensorData {
         this.gasData = targetProductToCopyFrom.gasData;
         this.people = targetProductToCopyFrom.people;
         this.statusHuman = targetProductToCopyFrom.statusHuman;
+        this.gasValue_recent = targetProductToCopyFrom.gasValue_recent;
     }
 
-    public SensorData(int gasData, boolean people, boolean statusHuman) {
+    public SensorData(int gasData, boolean people, boolean statusHuman,ArrayList<Integer> gasValue_recent) {
         this.gasData = gasData;
         this.people = people;
         this.statusHuman = statusHuman;
+        this.gasValue_recent = gasValue_recent;
     }
 
     public int getGasData() {
@@ -37,4 +41,7 @@ public class SensorData {
         this.people = people;
     }
 
+    public ArrayList<Integer> getGasArray() {
+        return gasValue_recent;
+    }
 }
