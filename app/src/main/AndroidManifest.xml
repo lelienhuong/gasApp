@@ -3,15 +3,23 @@
     package="com.lh.gasapp">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".chart.DynamicLineChartActivity"
+        <activity
+            android:name=".StreamCamera"
+            android:parentActivityName=".homeActivity.Home">
+        </activity>
+        <activity
+            android:name=".chart.DynamicLineChartActivity"
             android:parentActivityName=".homeActivity.Home">
         </activity>
         <activity android:name=".login.Login" />

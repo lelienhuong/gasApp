@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.lh.gasapp.MainActivity;
 import com.lh.gasapp.R;
 import com.lh.gasapp.SensorValueDisplayer;
+import com.lh.gasapp.StreamCamera;
 import com.lh.gasapp.firebase.FirebaseWrapper;
 import com.lh.gasapp.firebase.valueEventListener.MyValueEventListener;
 import com.lh.gasapp.login.saveLogin;
@@ -29,6 +31,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     private TextView tv_gas, tv_gasLevel, tv_peoplePresentStatus;
     private ProgressBar progressBar;
     private Button button_showChart;
+    private Button button_showCamera;
 
     private DatabaseReference firebaseReference;
 
@@ -69,6 +72,15 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
 
         buttonListener_showChartOnClick = new ButtonActionListener(this);
         button_showChart.setOnClickListener(buttonListener_showChartOnClick);
+
+        button_showCamera = findViewById(R.id.button_showCamera);
+        button_showCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, StreamCamera.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
