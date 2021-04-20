@@ -1,8 +1,10 @@
 package com.lh.gasapp;
 
+import java.util.ArrayList;
+
 public interface SensorValueDisplayer {
 
-    public void notifyGasValueChanged(int gasValue);
+    public void notifyGasValueChanged(double gasValue);
 
     public void notifyNewPointInTime();
 
@@ -11,4 +13,6 @@ public interface SensorValueDisplayer {
 
     public void notifyHumanDetected();
     public void notifyHumanNotDetected();
+
+    public void startAlarm();
 }

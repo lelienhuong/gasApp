@@ -2,6 +2,7 @@ package com.lh.gasapp.homeActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,12 +42,16 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     protected ArrayList<String> timeList = new ArrayList<>();
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
     private ButtonActionListener buttonListener_showChartOnClick;
-
-
+    private boolean isRunningAlarm = true;
+    public ArrayList<Integer> gasValues = new ArrayList<Integer>();
+    public long previousTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        gasValues = getIntent().getIntegerArrayListExtra("gasValues");
+        isRunningAlarm = getIntent().getBooleanExtra("stateRunningAlarm",true);
+        previousTime = getIntent().getLongExtra("previousTime",-1);
 
         tv_gas = findViewById(R.id.tv_gas);
         tv_gasLevel = findViewById(R.id.tv_gasLevel);
@@ -57,6 +62,16 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
 
         initFireBaseListener();
         initButton();
+    }
+
+    private void permissionToAlarm() {
+        if(previousTime != -1){
+            long currentTime = System.currentTimeMillis();
+            long time_since_alarm_closed_before = currentTime - previousTime;
+            if(time_since_alarm_closed_before > 60000){
+                isRunningAlarm = true;
+            }
+        }
     }
 
     private void initFireBaseListener() {
@@ -92,9 +107,9 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
 
 
     @Override
-    public void notifyGasValueChanged(int gasValue) {
+    public void notifyGasValueChanged(double gasValue) {
         progressBar.setProgress((int) ((gasValue) / 1023 * 100));
-        tv_gas.setText(String.valueOf(gasValue));
+        tv_gas.setText(String.valueOf((int)gasValue));
     }
 
     @Override
@@ -105,12 +120,16 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     @Override
     public void notifyGasStatusNotSafe() {
         tv_gasLevel.setText("Nguy hiểm");
-        startAlarm();
     }
 
-    private void startAlarm() {
-        Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
-        startActivity(alarmIntent);
+    public void startAlarm() {
+        permissionToAlarm();
+        if(isRunningAlarm) {
+            isRunningAlarm = false;
+            Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
+            alarmIntent.putExtra("stateRunningAlarm", isRunningAlarm);
+            startActivity(alarmIntent);
+        }
     }
 
     @Override

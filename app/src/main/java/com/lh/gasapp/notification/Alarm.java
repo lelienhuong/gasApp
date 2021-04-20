@@ -14,20 +14,24 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.lh.gasapp.firebase.valueEventListener.MyValueEventListener;
 import com.lh.gasapp.homeActivity.Home;
 import com.lh.gasapp.R;
+
+import java.util.ArrayList;
 
 public class Alarm extends AppCompatActivity {
     private Button btn;
     private static final int PERMISSION_REQUEST_CODE = 1;
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -41,6 +45,7 @@ public class Alarm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
+      boolean isRunningState  = getIntent().getBooleanExtra("stateRunningAlarm",false);
         MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.warning);
         mediaPlayer.start();
         btn = findViewById(R.id.music_stop);
@@ -48,8 +53,11 @@ public class Alarm extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mediaPlayer.stop();
-                long previous = System.currentTimeMillis();
+                long previousTime = System.currentTimeMillis();
                 Intent intent = new Intent(getApplicationContext(), Home.class);
+                intent.putExtra("previousTime", previousTime);
+                intent.putExtra("stateRunningAlarm", isRunningState);
+                intent.putIntegerArrayListExtra("gasValues", MyValueEventListener.gasValues);
                 startActivity(intent);
             }
         });
