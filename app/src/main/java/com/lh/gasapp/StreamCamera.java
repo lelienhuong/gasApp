@@ -11,7 +11,7 @@ import android.webkit.WebViewClient;
 public class StreamCamera extends AppCompatActivity {
 
     WebView web;
-    final String url = "https://facebook.com/";
+    final String url = "http://192.168.1.152/html/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

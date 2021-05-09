@@ -42,6 +42,7 @@ public class MyValueEventListener implements ValueEventListener {
     @Override
     public void onDataChange(@NonNull DataSnapshot snapshot) {
         SensorData sensorData = snapshot.getValue(SensorData.class);
+        gasValues.clear();
         for (DataSnapshot data: snapshot.child("gasValue_recent").getChildren())
         {
 //            String key=data.getKey();
@@ -79,11 +80,13 @@ public class MyValueEventListener implements ValueEventListener {
         notifyHumanDetectionStatus(sensorData);
 //        int gasValue = (int) sensorData.getGasData();
         if(gasValue > 400 && check == false){
-            index = gasValues.size();
+            index = gasValues.size()-1; //gasValues.size();
+            Log.d("INDEX", String.valueOf(index));
                check = true;
         }
 //        if(time2 != 0) {
             if(gasValues.size() - index >= 20 && check == true) {
+                Log.d("AZOOO","ZO");
                 check = false;
                 int tong = 0;
                 int i = index - 10;
@@ -126,7 +129,7 @@ public class MyValueEventListener implements ValueEventListener {
                 } else {
                     sensorValueDisplayer.notifyGasStatusNotSafe();
                     analysisValuesArrays.clear();
-                    sensorValueDisplayer.startAlarm();
+                    sensorValueDisplayer.startAlarm(sensorData);
                 }
             }
 //            int soluong = (int) (time2 - time1)/1000;

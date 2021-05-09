@@ -22,6 +22,7 @@ import com.lh.gasapp.StreamCamera;
 import com.lh.gasapp.firebase.FirebaseWrapper;
 import com.lh.gasapp.firebase.valueEventListener.MyValueEventListener;
 import com.lh.gasapp.login.saveLogin;
+import com.lh.gasapp.model.SensorData;
 import com.lh.gasapp.notification.Alarm;
 
 import java.text.SimpleDateFormat;
@@ -122,9 +123,10 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
         tv_gasLevel.setText("Nguy hiểm");
     }
 
-    public void startAlarm() {
+    public void startAlarm(SensorData sensorData) {
         permissionToAlarm();
         if(isRunningAlarm) {
+            sensorData.setBellOnRequired(true);
             isRunningAlarm = false;
             Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
             alarmIntent.putExtra("stateRunningAlarm", isRunningAlarm);

@@ -114,6 +114,7 @@ public class Login extends AppCompatActivity {
             Toast.makeText(Login.this, "Signed In Successfully", Toast.LENGTH_SHORT).show();
             FirebaseGoogleAuth(acc);
         } catch (ApiException e) {
+            Log.d("LOI", String.valueOf(e));
             Toast.makeText(Login.this, "Signed In Failed", Toast.LENGTH_SHORT).show();
 //            FirebaseGoogleAuth(null);
         }
