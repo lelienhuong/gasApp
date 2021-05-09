@@ -10,7 +10,7 @@ import com.lh.gasapp.model.SensorData;
 
 import java.text.SimpleDateFormat;
 
-public class LineChartValueEventListener implements ValueEventListener {
+public class LineChartValueEventListener {
 
     private DynamicLineChartManager dynamicLineChartManager;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -19,7 +19,6 @@ public class LineChartValueEventListener implements ValueEventListener {
         this.dynamicLineChartManager = dynamicLineChartManager;
     }
 
-    @Override
     public void onDataChange(@NonNull DataSnapshot snapshot) {
         SensorData sensorData = snapshot.getValue(SensorData.class);
         int gasValue = (int) sensorData.getGasData();
@@ -27,7 +26,6 @@ public class LineChartValueEventListener implements ValueEventListener {
 
     }
 
-    @Override
     public void onCancelled(@NonNull DatabaseError error) {
 
     }

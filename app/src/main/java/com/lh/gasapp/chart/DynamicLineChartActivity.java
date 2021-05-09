@@ -1,16 +1,22 @@
 package com.lh.gasapp.chart;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.R;
 import com.lh.gasapp.firebase.FirebaseWrapper;
+import com.lh.gasapp.firebase.valueEventListener.DetailValueEachDayListener;
 import com.lh.gasapp.firebase.valueEventListener.LineChartValueEventListener;
+import com.lh.gasapp.model.DetailValue;
 import com.lh.gasapp.model.DynamicLineChartManager;
 
 import java.util.ArrayList;
@@ -24,6 +30,8 @@ public class DynamicLineChartActivity extends AppCompatActivity {
     private LineChart lineChart_widget;
 
     private DatabaseReference firebaseReference;
+    private ArrayList<DetailValue> detailValueList;
+    private String dateToShowChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,26 +50,29 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         dynamicLineChartManager = new DynamicLineChartManager(lineChart_widget);
         dynamicLineChartManager.setYAxis(1100, 0, 100);
         getDataFromIncomingIntent();
-        attachValueListenerToFirebase();
+        //attachValueListenerToFirebase();
     }
 
     private void attachValueListenerToFirebase() {
-        lineChartValueListener = new LineChartValueEventListener(dynamicLineChartManager);
-
-        firebaseReference = FirebaseWrapper.getReferrence();
-        firebaseReference.addValueEventListener(lineChartValueListener);
+//        lineChartValueListener = new LineChartValueEventListener(dynamicLineChartManager);
+//        firebaseReference = FirebaseWrapper.getReferrence();
+//        firebaseReference.addValueEventListener(lineChartValueListener);
     }
 
     private void getDataFromIncomingIntent() {
         Intent intent = getIntent();
-        gasValues = intent.getIntegerArrayListExtra("gas values");
-        time = intent.getStringArrayListExtra("time list");
-        fillLineChart();
+        dateToShowChart = intent.getStringExtra("Date");
+        Log.d("DATE", dateToShowChart);
+        attachValueListenerToDate();
     }
 
-    private void fillLineChart() {
-        for (int i = 0; i < gasValues.size(); i++) {
-            dynamicLineChartManager.addEntry(gasValues.get(i), time.get(i));
-        }
+    private void attachValueListenerToDate(){
+        DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
+        DetailValueEachDayListener detailValueEachDayListener = new DetailValueEachDayListener(dateToShowChart);
+        detailValueEachDayListener.attachLineChart(dynamicLineChartManager);
+        reference.addValueEventListener(detailValueEachDayListener);
     }
+
+
+
 }
