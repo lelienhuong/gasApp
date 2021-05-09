@@ -1,5 +1,7 @@
 package com.lh.gasapp.model;
 
+import android.util.Log;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
@@ -66,15 +68,27 @@ public class DynamicLineChartManager {
         lineDataSets = LineDataSetFactory.createMultipleLineDataSet(names, colors);
     }
 
-    public void addEntry(int xValue, String yTime) {
-        timeList.add(yTime);
+    public void addEntry(int yValue, String xTime) {
+        timeList.add(xTime);
+        Log.d("DEBUG", "Adding entry: " + yValue + " at " + lineDataSet.getEntryCount());
 
-        Entry entry = new Entry(lineDataSet.getEntryCount(), xValue);
+        Entry entry = new Entry(lineDataSet.getEntryCount() , yValue);
         lineData.addEntry(entry, 0);
         lineData.notifyDataChanged();
         lineChart_widget.notifyDataSetChanged();
-        lineChart_widget.moveViewToX(lineData.getEntryCount() - 5);
+        lineChart_widget.moveViewToX(lineDataSet.getEntryCount() - 5);
     }
+
+    public void setEntryList(ArrayList<DetailValue> detailValueList) {
+        timeList.clear();
+        lineData.clearValues();
+        lineDataSet = LineDataSetFactory.createSingleLineDataSet();
+        lineData.addDataSet(lineDataSet);
+        for(DetailValue detailValue : detailValueList ){
+            addEntry(detailValue.gasValue, detailValue.time);
+        }
+    }
+
 
     public void addEntry(List<Integer> numbers) {
 
@@ -139,4 +153,5 @@ public class DynamicLineChartManager {
         lineChart_widget.setDescription(description);
         lineChart_widget.invalidate();
     }
+
 }

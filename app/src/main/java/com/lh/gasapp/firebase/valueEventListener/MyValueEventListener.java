@@ -48,7 +48,7 @@ public class MyValueEventListener implements ValueEventListener {
             int value=Integer.parseInt(data.getValue().toString());
             gasValues.add(value);
         }
-            Log.d("IDDDD", String.valueOf(gasValues));
+         //   Log.d("IDDDD", String.valueOf(gasValues));
 
         notifyGasValueChanged(sensorData);
     }
@@ -58,7 +58,7 @@ public class MyValueEventListener implements ValueEventListener {
  //       String keyID = FirebaseDatabase.getInstance().getReference().child("ERL43dCv3RXCMy8LRLzyIt6WtLH3").child("gasArray").push().getKey();
    //     Log.d("IDDDD",keyID);
 //        gasValues = sensorData.getGasArray();
-        Log.d("MANGTEST", String.valueOf(sensorData.getGasArray()));
+//        Log.d("MANGTEST", String.valueOf(sensorData.getGasArray()));
 //        gasValue = sensorData.getGasData();
         gasValue = gasValues.get(gasValues.size()-1);
         sensorValueDisplayer.notifyGasValueChanged(gasValue);
@@ -71,7 +71,7 @@ public class MyValueEventListener implements ValueEventListener {
 //            time2 = System.currentTimeMillis();
 //        }
         if(gasValues.get(gasValues.size()-1) > 400){
-            Log.d("Giatri", String.valueOf(gasValues.get(gasValues.size()-1)));
+//            Log.d("Giatri", String.valueOf(gasValues.get(gasValues.size()-1)));
             sensorValueDisplayer.notifyGasStatusNotSafe();
         }else{
             sensorValueDisplayer.notifyGasStatusSafe();

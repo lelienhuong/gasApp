@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseReference;
+import com.lh.gasapp.History;
 import com.lh.gasapp.MainActivity;
 import com.lh.gasapp.R;
 import com.lh.gasapp.SensorValueDisplayer;
@@ -33,6 +34,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     private ProgressBar progressBar;
     private Button button_showChart;
     private Button button_showCamera;
+    private Button button_showHistory;
 
     private DatabaseReference firebaseReference;
 
@@ -93,6 +95,15 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, StreamCamera.class);
+                startActivity(intent);
+            }
+        });
+
+        button_showHistory = findViewById(R.id.button_showHistory);
+        button_showHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, History.class);
                 startActivity(intent);
             }
         });
