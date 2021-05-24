@@ -147,6 +147,7 @@ public class Login extends AppCompatActivity {
                             FirebaseUser user = fAuth.getCurrentUser();
                             SaveSharedPreference.setUserName(getApplicationContext(), FirebaseAuth.getInstance().getUid());
                             startActivity(new Intent(getApplicationContext(), Home.class));
+                            finish();
                             // TODO: update UI when success sign in
                         } else {
                             // login fail

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lh.gasapp">
 
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,16 +15,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".History"></activity>
+        <activity android:name=".ChangeHelperPhone"></activity>
+        <activity android:name=".History" />
         <activity
             android:name=".StreamCamera"
-            android:parentActivityName=".homeActivity.Home"></activity>
+            android:parentActivityName=".homeActivity.Home" />
         <activity
             android:name=".chart.DynamicLineChartActivity"
-            android:parentActivityName=".homeActivity.Home"></activity>
+            android:parentActivityName=".homeActivity.Home" />
         <activity android:name=".login.Login" />
         <activity android:name=".notification.Alarm" />
         <activity android:name=".homeActivity.Home" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

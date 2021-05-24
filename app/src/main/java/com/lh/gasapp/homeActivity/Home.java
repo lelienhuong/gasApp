@@ -1,6 +1,9 @@
 package com.lh.gasapp.homeActivity;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,9 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseReference;
+import com.lh.gasapp.ChangeHelperPhone;
 import com.lh.gasapp.History;
 import com.lh.gasapp.MainActivity;
 import com.lh.gasapp.R;
@@ -29,8 +34,8 @@ import com.lh.gasapp.notification.Alarm;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-
 public class Home extends AppCompatActivity implements SensorValueDisplayer {
+    public static Home instance = null;
     private TextView tv_gas, tv_gasLevel, tv_peoplePresentStatus;
     private ProgressBar progressBar;
     private Button button_showChart;
@@ -52,6 +57,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        instance = this;
         gasValues = getIntent().getIntegerArrayListExtra("gasValues");
         isRunningAlarm = getIntent().getBooleanExtra("stateRunningAlarm",true);
         previousTime = getIntent().getLongExtra("previousTime",-1);
@@ -75,6 +81,9 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
                 isRunningAlarm = true;
             }
         }
+//        else{
+//            isRunningAlarm = true;
+//        } bỏ tại vì k cần thiết
     }
 
     private void initFireBaseListener() {
@@ -86,19 +95,19 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     private void initButton() {
-        button_showChart = findViewById(R.id.button_showChart);
+//        button_showChart = findViewById(R.id.button_showChart);
 
-        buttonListener_showChartOnClick = new ButtonActionListener(this);
-        button_showChart.setOnClickListener(buttonListener_showChartOnClick);
+//        buttonListener_showChartOnClick = new ButtonActionListener(this);
+//        button_showChart.setOnClickListener(buttonListener_showChartOnClick);
 
-        button_showCamera = findViewById(R.id.button_showCamera);
-        button_showCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Home.this, StreamCamera.class);
-                startActivity(intent);
-            }
-        });
+//        button_showCamera = findViewById(R.id.button_showCamera);
+//        button_showCamera.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Home.this, StreamCamera.class);
+//                startActivity(intent);
+//            }
+//        });
 
         button_showHistory = findViewById(R.id.button_showHistory);
         button_showHistory.setOnClickListener(new View.OnClickListener() {
@@ -135,30 +144,37 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     public void startAlarm(SensorData sensorData) {
+        sensorData.setBellOnRequired(true);
         permissionToAlarm();
         if(isRunningAlarm) {
-            sensorData.setBellOnRequired(true);
+            try {
+                Alarm.instance.finish();
+            }catch (Exception e){
+                Log.d("NULL","null");
+            }
+//            finishActivity(111);
             isRunningAlarm = false;
             Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
             alarmIntent.putExtra("stateRunningAlarm", isRunningAlarm);
+            alarmIntent.putExtra("statePeople",sensorData.isPeoplePresented());
             startActivity(alarmIntent);
+//              finish();
         }
     }
 
     @Override
     public void notifyGasStatusSafe() {
-        tv_gasLevel.setText("Bình thường");
+        tv_gasLevel.setText("An toàn");
     }
 
     @Override
     public void notifyHumanDetected() {
-        tv_peoplePresentStatus.setText("Có người trong khu vực");
+        tv_peoplePresentStatus.setText("Có người");
     }
 
     @Override
     public void notifyHumanNotDetected() {
-        tv_peoplePresentStatus.setText("Không có người trong khu vực");
-
+        tv_peoplePresentStatus.setText("Không có người");
     }
 
     @Override
@@ -172,12 +188,21 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
                 SaveSharedPreference.setUserName(this, "");
                 startActivity(new Intent(this, MainActivity.class));
                 break;
-
+            case R.id.phoneHelper:
+                startActivity(new Intent(this, ChangeHelperPhone.class));
+                break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(resultCode==111){
+//            finish();
+//        }
+//    }
 }
 

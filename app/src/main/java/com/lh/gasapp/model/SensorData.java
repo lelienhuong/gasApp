@@ -1,5 +1,7 @@
 package com.lh.gasapp.model;
 
+import com.lh.gasapp.firebase.FirebaseWrapper;
+
 import java.util.ArrayList;
 
 public class SensorData {
@@ -25,7 +27,7 @@ public class SensorData {
     }
 
     public void setBellOnRequired(boolean bellOnRequired) {
-        isBellOnRequired = bellOnRequired;
+        FirebaseWrapper.getReferrence().child("isBellOnRequired").setValue(bellOnRequired);
     }
 
     public SensorData(int gasData, boolean people, boolean statusHuman, ArrayList<Integer> gasValue_recent, boolean isBellOnRequired) {

@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.SensorValueDisplayer;
 import com.lh.gasapp.model.SensorData;
+import com.lh.gasapp.notification.Alarm;
 import com.lh.gasapp.utils.GasDangerChecker;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class MyValueEventListener implements ValueEventListener {
     private long time1 = 0, time2 = 0,previous;
     private double oldData = -1,oldValue = -1;
     public boolean check = false;
-    public int index = 0;
+    public int index = 0,lastIndexAnalysis=-1;
     public static ArrayList<Integer> gasValues = new ArrayList<Integer>();
 
     ArrayList<Integer> analysisValuesArrays = new ArrayList<>();
@@ -49,44 +50,19 @@ public class MyValueEventListener implements ValueEventListener {
             int value=Integer.parseInt(data.getValue().toString());
             gasValues.add(value);
         }
-         //   Log.d("IDDDD", String.valueOf(gasValues));
-
         notifyGasValueChanged(sensorData);
     }
 
     private void notifyGasValueChanged(SensorData sensorData) {
-
- //       String keyID = FirebaseDatabase.getInstance().getReference().child("ERL43dCv3RXCMy8LRLzyIt6WtLH3").child("gasArray").push().getKey();
-   //     Log.d("IDDDD",keyID);
-//        gasValues = sensorData.getGasArray();
-//        Log.d("MANGTEST", String.valueOf(sensorData.getGasArray()));
-//        gasValue = sensorData.getGasData();
         gasValue = gasValues.get(gasValues.size()-1);
         sensorValueDisplayer.notifyGasValueChanged(gasValue);
-        double value = sensorData.getGasData();
-//        if(time1 == 0) {
-//            time1 = System.currentTimeMillis();
-//            time2 = 0;
-//            oldValue = (int) sensorData.getGasData();
-//        }else{
-//            time2 = System.currentTimeMillis();
-//        }
-        if(gasValues.get(gasValues.size()-1) > 400){
-//            Log.d("Giatri", String.valueOf(gasValues.get(gasValues.size()-1)));
-            sensorValueDisplayer.notifyGasStatusNotSafe();
-        }else{
-            sensorValueDisplayer.notifyGasStatusSafe();
-        }
         notifyHumanDetectionStatus(sensorData);
-//        int gasValue = (int) sensorData.getGasData();
-        if(gasValue > 400 && check == false){
+        if(gasValue > 400 && check == false){ //check để lưu vị trí tại điểm đột biến có giá trị >400
             index = gasValues.size()-1; //gasValues.size();
-            Log.d("INDEX", String.valueOf(index));
                check = true;
         }
-//        if(time2 != 0) {
-            if(gasValues.size() - index >= 20 && check == true) {
-                Log.d("AZOOO","ZO");
+        if(gasValues.size() - index >= 20 && check == true) { //20
+                lastIndexAnalysis = index + 10*2 -1; //so 2 dau tien la mot mang co bnhieu gia tri (=10)
                 check = false;
                 int tong = 0;
                 int i = index - 10;
@@ -95,14 +71,14 @@ public class MyValueEventListener implements ValueEventListener {
                     for (int j = i; j < index; j++) {
                         tong = tong + gasValues.get(j);
                     }
-                    tong = tong / 10; // 5 gia tri trong 1 khung
+                    tong = tong / (index); // gia tri trong 1 khung  //moi sua them
                     analysisValuesArrays.add(tong);
                     i = index;
                     while (i <= index + 10) {
                         for (int j = i; j < i + 10; j++) {
                             tong = tong + gasValues.get(j);
                         }
-                        tong = tong / 10; // 5 gia tri trong 1 khung
+                        tong = tong / 10; // 10 gia tri trong 1 khung
                         analysisValuesArrays.add(tong);
                         i = i + 10;
                     }
@@ -111,7 +87,7 @@ public class MyValueEventListener implements ValueEventListener {
                         for (int j = i; j < i + 10; j++) {
                             tong = tong + gasValues.get(j);
                         }
-                        tong = tong / 10; // 5 gia tri trong 1 khung
+                        tong = tong / 10; // 10 gia tri trong 1 khung
                         analysisValuesArrays.add(tong);
                         i = i + 10;
                     }
@@ -125,21 +101,35 @@ public class MyValueEventListener implements ValueEventListener {
                     }
                 }
                 if (analysisValuesArrays.size() == 0) {
+                    Log.d("BINHTHUONG","OKKKKKKK");
                     sensorValueDisplayer.notifyGasStatusSafe();
+                    sensorData.setBellOnRequired(false); //moi sua them
+                    try {
+                        Alarm.mediaPlayer.stop();
+                        Alarm.instance.finish();
+                    }catch (Exception e){
+                        Log.d("NULL","null");
+                    }
                 } else {
+                    Log.d("BAODONG","OKKKKKKK");
                     sensorValueDisplayer.notifyGasStatusNotSafe();
                     analysisValuesArrays.clear();
+                    sensorValueDisplayer.notifyGasStatusNotSafe();
                     sensorValueDisplayer.startAlarm(sensorData);
                 }
             }
-//            int soluong = (int) (time2 - time1)/1000;
-//            for (int i = 1; i <= soluong; i++) {
-//                gasValues.add((int) oldValue);
-//            }
-//            oldValue = gasValue;
-//            time1 = time2;
-//            Log.d("MANG", String.valueOf(gasValues));
-//        }
+        if(lastIndexAnalysis!=-1 && gasValues.size() - lastIndexAnalysis >= 30 && check== false){
+            Log.d("BINHTHUONG","OKKKKKKK");
+            sensorValueDisplayer.notifyGasStatusSafe();
+            sensorData.setBellOnRequired(false);
+            try {
+                Alarm.mediaPlayer.stop();
+                Alarm.instance.finish();
+            }catch (Exception e){
+                Log.d("NULL","null");
+            }
+        }
+
     }
 
     private void notifyHumanDetectionStatus(SensorData sensorData) {
