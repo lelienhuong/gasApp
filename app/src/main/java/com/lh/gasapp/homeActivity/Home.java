@@ -32,7 +32,6 @@ import java.util.ArrayList;
 public class Home extends AppCompatActivity implements SensorValueDisplayer {
     private TextView tv_gas, tv_gasLevel, tv_peoplePresentStatus;
     private ProgressBar progressBar;
-    private Button button_showChart;
     private Button button_showCamera;
     private Button button_showHistory;
 
@@ -85,10 +84,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     private void initButton() {
-        button_showChart = findViewById(R.id.button_showChart);
-
         buttonListener_showChartOnClick = new ButtonActionListener(this);
-        button_showChart.setOnClickListener(buttonListener_showChartOnClick);
 
         button_showCamera = findViewById(R.id.button_showCamera);
         button_showCamera.setOnClickListener(new View.OnClickListener() {

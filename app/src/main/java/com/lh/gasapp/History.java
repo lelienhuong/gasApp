@@ -27,11 +27,13 @@ public class History extends AppCompatActivity {
     private ArrayAdapter adapter;
     ArrayList<DetailValue> detailValueList ;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Danh sách ngày");
 
         listView_date = findViewById(R.id.lv_date);
         dateList = new ArrayList<>();

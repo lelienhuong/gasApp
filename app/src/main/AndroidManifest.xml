@@ -14,13 +14,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".History"></activity>
+        <activity
+            android:name=".History"
+            android:parentActivityName=".homeActivity.Home"></activity>
         <activity
             android:name=".StreamCamera"
             android:parentActivityName=".homeActivity.Home"></activity>
         <activity
             android:name=".chart.DynamicLineChartActivity"
-            android:parentActivityName=".homeActivity.Home"></activity>
+            android:parentActivityName=".History"></activity>
         <activity android:name=".login.Login" />
         <activity android:name=".notification.Alarm" />
         <activity android:name=".homeActivity.Home" />

@@ -76,6 +76,7 @@ public class DynamicLineChartManager {
         lineData.addEntry(entry, 0);
         lineData.notifyDataChanged();
         lineChart_widget.notifyDataSetChanged();
+        lineChart_widget.setVisibleXRangeMaximum(6);
         lineChart_widget.moveViewToX(lineDataSet.getEntryCount() - 5);
     }
 

@@ -38,25 +38,19 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dynamic_line_chart);
 
-        getSupportActionBar().setTitle("Realtime Chart");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         lineChart_widget = (LineChart) findViewById(R.id.dynamic_chart);
 
         initChartData();
+        getSupportActionBar().setTitle("Ngày " + dateToShowChart);
     }
 
     private void initChartData() {
         dynamicLineChartManager = new DynamicLineChartManager(lineChart_widget);
         dynamicLineChartManager.setYAxis(1100, 0, 100);
         getDataFromIncomingIntent();
-        //attachValueListenerToFirebase();
-    }
-
-    private void attachValueListenerToFirebase() {
-//        lineChartValueListener = new LineChartValueEventListener(dynamicLineChartManager);
-//        firebaseReference = FirebaseWrapper.getReferrence();
-//        firebaseReference.addValueEventListener(lineChartValueListener);
+        dynamicLineChartManager.setDescription("Data of " + dateToShowChart);
     }
 
     private void getDataFromIncomingIntent() {
