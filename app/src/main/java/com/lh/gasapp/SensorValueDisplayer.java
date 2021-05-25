@@ -1,5 +1,7 @@
 package com.lh.gasapp;
 
+import com.lh.gasapp.model.SensorData;
+
 import java.util.ArrayList;
 
 public interface SensorValueDisplayer {
@@ -14,5 +16,5 @@ public interface SensorValueDisplayer {
     public void notifyHumanDetected();
     public void notifyHumanNotDetected();
 
-    public void startAlarm();
+    public void startAlarm(SensorData sensorData);
 }

@@ -57,6 +57,7 @@
         android:layout_height="34dp"
         android:background="#3F51B5"
         android:text="LOGIN"
+        android:radius ="20dp"
         android:textColor="#FFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"

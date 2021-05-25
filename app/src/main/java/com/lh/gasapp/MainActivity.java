@@ -19,11 +19,13 @@ public class MainActivity extends AppCompatActivity {
         if(SaveSharedPreference.getUserName(MainActivity.this).length() == 0)
         {
             startActivity(new Intent(getApplicationContext(), Login.class));
+            finish();
         }
         else
         {
             Intent homeIntent = new Intent(getApplicationContext(), Home.class);
             startActivity(homeIntent);
+            finish();
         }
     }
 }

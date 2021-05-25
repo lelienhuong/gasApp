@@ -1,5 +1,7 @@
 package com.lh.gasapp.model;
 
+import com.lh.gasapp.firebase.FirebaseWrapper;
+
 import java.util.ArrayList;
 
 public class SensorData {
@@ -7,6 +9,7 @@ public class SensorData {
     private boolean people;
     private boolean statusHuman;
     private ArrayList<Integer> gasValue_recent = new ArrayList<Integer>();
+    private boolean isBellOnRequired = false;
     public SensorData(){
 
     }
@@ -16,13 +19,23 @@ public class SensorData {
         this.people = targetProductToCopyFrom.people;
         this.statusHuman = targetProductToCopyFrom.statusHuman;
         this.gasValue_recent = targetProductToCopyFrom.gasValue_recent;
+        this.isBellOnRequired = targetProductToCopyFrom.isBellOnRequired;
     }
 
-    public SensorData(int gasData, boolean people, boolean statusHuman,ArrayList<Integer> gasValue_recent) {
+    public boolean isBellOnRequired() {
+        return isBellOnRequired;
+    }
+
+    public void setBellOnRequired(boolean bellOnRequired) {
+        FirebaseWrapper.getReferrence().child("isBellOnRequired").setValue(bellOnRequired);
+    }
+
+    public SensorData(int gasData, boolean people, boolean statusHuman, ArrayList<Integer> gasValue_recent, boolean isBellOnRequired) {
         this.gasData = gasData;
         this.people = people;
         this.statusHuman = statusHuman;
         this.gasValue_recent = gasValue_recent;
+        this.isBellOnRequired = isBellOnRequired;
     }
 
     public int getGasData() {
