@@ -6,8 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".chart.DynamicLineChartActivity">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar" />
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/dynamic_chart"
+        android:layout_marginTop="65dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

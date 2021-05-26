@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ChangeHelperPhone"></activity>
-        <activity android:name=".History" />
+        <activity android:name=".History"/>
         <activity
             android:name=".StreamCamera"
             android:parentActivityName=".homeActivity.Home" />
