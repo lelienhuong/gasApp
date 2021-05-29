@@ -7,9 +7,14 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.firebase.database.DataSnapshot;
@@ -39,11 +44,12 @@ public class DynamicLineChartActivity extends AppCompatActivity {
     private DatabaseReference firebaseReference;
     private ArrayList<DetailValue> detailValueList;
     private String dateToShowChart;
+    private String anotherDateToShowChart;
+    private ArrayList<String> dateList = new ArrayList<>();
 
     private ImageView iconBack;
     private ImageView iconCalendar;
 
-    private ArrayList<String> dateList;
     DatePickerDialog.OnDateSetListener setListener;
 
     @Override
@@ -58,6 +64,8 @@ public class DynamicLineChartActivity extends AppCompatActivity {
 
         lineChart_widget = (LineChart) findViewById(R.id.dynamic_chart);
 
+        attachListenerToViewDaysFirstTime();
+        dateToShowChart = "19_4";
         initChartData();
     }
 
@@ -113,13 +121,15 @@ public class DynamicLineChartActivity extends AppCompatActivity {
             }
         });
 
+        getSupportActionBar().setTitle("Biểu đồ");
     }
 
     private void initChartData() {
         dynamicLineChartManager = new DynamicLineChartManager(lineChart_widget);
         dynamicLineChartManager.setYAxis(1100, 0, 100);
+        anotherDateToShowChart = dateToShowChart.replace('_', '/');
         attachValueListenerToDate();
-        dynamicLineChartManager.setDescription("Data of " + dateToShowChart);
+        dynamicLineChartManager.setDescription("Data of " + anotherDateToShowChart);
     }
 
     private void getDataFromIncomingIntent() {
@@ -136,6 +146,66 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         reference.addValueEventListener(detailValueEachDayListener);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.calendar:
+                chooseDate();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void chooseDate() {
+        Calendar calendar = Calendar.getInstance();
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog.OnDateSetListener setListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month += 1;
+                dateToShowChart = dayOfMonth + "_" + month;
+                if (dateList.contains(dateToShowChart)) {
+                    Log.d("status", "yes");
+                    initChartData();
+                } else {
+                    Log.d("status", "no");
+                    Toast.makeText(DynamicLineChartActivity.this, "Không có dữ liệu", Toast.LENGTH_LONG);
+                }
+            }
+        };
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                DynamicLineChartActivity.this, setListener, year, month, day);
+        datePickerDialog.show();
+    }
+
+    public void attachListenerToViewDaysFirstTime(){
+        DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dateList.clear();
+                Iterable<DataSnapshot> listOfDates = snapshot.getChildren();
+                for (DataSnapshot eachDateAsKey : listOfDates){
+                    dateList.add(eachDateAsKey.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
 }
