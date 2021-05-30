@@ -51,59 +51,22 @@ public class DynamicLineChartActivity extends AppCompatActivity {
     private ImageView iconCalendar;
 
     DatePickerDialog.OnDateSetListener setListener;
+    boolean kt = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dynamic_line_chart);
-        attachListenerToDays();
-        dateToShowChart = dateList.get(dateList.size() - 1);
-        Log.d("DATE", dateToShowChart);
 
-        initIconToolbar();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Biểu đồ");
 
         lineChart_widget = (LineChart) findViewById(R.id.dynamic_chart);
 
-        attachListenerToViewDaysFirstTime();
-        dateToShowChart = "19_4";
-        initChartData();
+        attachListenerToViewDays();
     }
 
-    private void initIconToolbar() {
-        iconBack = findViewById(R.id.icon_back);
-        iconBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DynamicLineChartActivity.this, Home.class);
-                startActivity(intent);
-            }
-        });
-
-        Calendar calendar = Calendar.getInstance();
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        setListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                month += 1;
-                dateToShowChart = dayOfMonth + "_" + month;
-            }
-        };
-
-        iconCalendar = findViewById(R.id.icon_calendar);
-        iconCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        DynamicLineChartActivity.this, setListener, year, month, day);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-    public void attachListenerToDays(){
+    public void attachListenerToViewDays(){
         DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -113,6 +76,11 @@ public class DynamicLineChartActivity extends AppCompatActivity {
                 for (DataSnapshot eachDateAsKey : listOfDates) {
                     dateList.add(eachDateAsKey.getKey());
                 }
+                if (kt && dateList.size() > 0){
+                    dateToShowChart = dateList.get(dateList.size()-1);
+                    initChartData();
+                    kt = false;
+                }
             }
 
             @Override
@@ -120,8 +88,6 @@ public class DynamicLineChartActivity extends AppCompatActivity {
 
             }
         });
-
-        getSupportActionBar().setTitle("Biểu đồ");
     }
 
     private void initChartData() {
@@ -132,12 +98,12 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         dynamicLineChartManager.setDescription("Data of " + anotherDateToShowChart);
     }
 
-    private void getDataFromIncomingIntent() {
-        Intent intent = getIntent();
-        dateToShowChart = intent.getStringExtra("Date");
-        Log.d("DATE", dateToShowChart);
-        attachValueListenerToDate();
-    }
+//    private void getDataFromIncomingIntent() {
+//        Intent intent = getIntent();
+//        dateToShowChart = intent.getStringExtra("Date");
+//        Log.d("DATE", dateToShowChart);
+//        attachValueListenerToDate();
+//    }
 
     private void attachValueListenerToDate(){
         DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
@@ -188,24 +154,4 @@ public class DynamicLineChartActivity extends AppCompatActivity {
                 DynamicLineChartActivity.this, setListener, year, month, day);
         datePickerDialog.show();
     }
-
-    public void attachListenerToViewDaysFirstTime(){
-        DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dateList.clear();
-                Iterable<DataSnapshot> listOfDates = snapshot.getChildren();
-                for (DataSnapshot eachDateAsKey : listOfDates){
-                    dateList.add(eachDateAsKey.getKey());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
 }
