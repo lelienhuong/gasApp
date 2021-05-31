@@ -7,35 +7,39 @@ import java.util.ArrayList;
 public class SensorData {
     private int gasData;
     private boolean people;
-    private boolean statusHuman;
     private ArrayList<Integer> gasValue_recent = new ArrayList<Integer>();
     private boolean isBellOnRequired = false;
+    private ArrayList gasValueHistory = new ArrayList();
     public SensorData(){
-
     }
 
     public SensorData(SensorData targetProductToCopyFrom) {
         this.gasData = targetProductToCopyFrom.gasData;
         this.people = targetProductToCopyFrom.people;
-        this.statusHuman = targetProductToCopyFrom.statusHuman;
         this.gasValue_recent = targetProductToCopyFrom.gasValue_recent;
         this.isBellOnRequired = targetProductToCopyFrom.isBellOnRequired;
+        this.gasValueHistory = targetProductToCopyFrom.gasValueHistory;
     }
 
-    public boolean isBellOnRequired() {
-        return isBellOnRequired;
-    }
 
     public void setBellOnRequired(boolean bellOnRequired) {
         FirebaseWrapper.getReferrence().child("isBellOnRequired").setValue(bellOnRequired);
     }
 
-    public SensorData(int gasData, boolean people, boolean statusHuman, ArrayList<Integer> gasValue_recent, boolean isBellOnRequired) {
+    public SensorData(int gasData, boolean people, boolean statusHuman, ArrayList<Integer> gasValue_recent, boolean isBellOnRequired, ArrayList gasValueHistory) {
         this.gasData = gasData;
         this.people = people;
-        this.statusHuman = statusHuman;
         this.gasValue_recent = gasValue_recent;
         this.isBellOnRequired = isBellOnRequired;
+        this.gasValueHistory = gasValueHistory;
+    }
+
+    public ArrayList getGasValueHistory() {
+        return gasValueHistory;
+    }
+
+    public void setGasValueHistory(ArrayList gasValueHistory) {
+        this.gasValueHistory = gasValueHistory;
     }
 
     public int getGasData() {
@@ -46,7 +50,7 @@ public class SensorData {
         this.gasData = gasData;
     }
 
-    public boolean isPeoplePresented() {
+    public boolean isPeople() {
         return people;
     }
 
@@ -54,7 +58,15 @@ public class SensorData {
         this.people = people;
     }
 
-    public ArrayList<Integer> getGasArray() {
+    public ArrayList<Integer> getGasValue_recent() {
         return gasValue_recent;
+    }
+
+    public void setGasValue_recent(ArrayList<Integer> gasValue_recent) {
+        this.gasValue_recent = gasValue_recent;
+    }
+
+    public boolean isBellOnRequired() {
+        return isBellOnRequired;
     }
 }

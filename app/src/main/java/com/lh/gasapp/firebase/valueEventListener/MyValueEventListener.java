@@ -42,7 +42,8 @@ public class MyValueEventListener implements ValueEventListener {
 
     @Override
     public void onDataChange(@NonNull DataSnapshot snapshot) {
-        SensorData sensorData = snapshot.getValue(SensorData.class);
+        SensorData sensorData = new SensorData();
+        sensorData.setPeople((Boolean) snapshot.child("people").getValue());
         gasValues.clear();
         for (DataSnapshot data: snapshot.child("gasValue_recent").getChildren())
         {
@@ -51,9 +52,11 @@ public class MyValueEventListener implements ValueEventListener {
             gasValues.add(value);
         }
         notifyGasValueChanged(sensorData);
+
     }
 
     private void notifyGasValueChanged(SensorData sensorData) {
+        Log.d("ZOOOO","zo");
         gasValue = gasValues.get(gasValues.size()-1);
         sensorValueDisplayer.notifyGasValueChanged(gasValue);
         notifyHumanDetectionStatus(sensorData);
@@ -61,11 +64,11 @@ public class MyValueEventListener implements ValueEventListener {
             index = gasValues.size()-1; //gasValues.size();
                check = true;
         }
-        if(gasValues.size() - index >= 20 && check == true) { //20
-                lastIndexAnalysis = index + 10*2 -1; //so 2 dau tien la mot mang co bnhieu gia tri (=10)
+        if(gasValues.size() - index >= 10 && check == true) { //20
+                lastIndexAnalysis = index + 5*2 -1; //so 2 dau tien la mot mang co bnhieu gia tri (=10)
                 check = false;
                 int tong = 0;
-                int i = index - 10;
+                int i = index - 5;
                 if (i < 0) {
                     i = 0;
                     for (int j = i; j < index; j++) {
@@ -74,22 +77,22 @@ public class MyValueEventListener implements ValueEventListener {
                     tong = tong / (index); // gia tri trong 1 khung  //moi sua them
                     analysisValuesArrays.add(tong);
                     i = index;
-                    while (i <= index + 10) {
-                        for (int j = i; j < i + 10; j++) {
+                    while (i <= index + 5) {
+                        for (int j = i; j < i + 5; j++) {
                             tong = tong + gasValues.get(j);
                         }
-                        tong = tong / 10; // 10 gia tri trong 1 khung
+                        tong = tong / 5; // 10 gia tri trong 1 khung
                         analysisValuesArrays.add(tong);
-                        i = i + 10;
+                        i = i + 5;
                     }
                 } else {
-                    while (i <= index + 10) {
-                        for (int j = i; j < i + 10; j++) {
+                    while (i <= index + 5) {
+                        for (int j = i; j < i + 5; j++) {
                             tong = tong + gasValues.get(j);
                         }
-                        tong = tong / 10; // 10 gia tri trong 1 khung
+                        tong = tong / 5; // 10 gia tri trong 1 khung
                         analysisValuesArrays.add(tong);
-                        i = i + 10;
+                        i = i + 5;
                     }
                 }
                 for (int k = 0; k < analysisValuesArrays.size() - 1; k++) {
@@ -112,13 +115,12 @@ public class MyValueEventListener implements ValueEventListener {
                     }
                 } else {
                     Log.d("BAODONG","OKKKKKKK");
-                    sensorValueDisplayer.notifyGasStatusNotSafe();
                     analysisValuesArrays.clear();
                     sensorValueDisplayer.notifyGasStatusNotSafe();
                     sensorValueDisplayer.startAlarm(sensorData);
                 }
             }
-        if(lastIndexAnalysis!=-1 && gasValues.size() - lastIndexAnalysis >= 30 && check== false){
+        if(lastIndexAnalysis!=-1 && gasValues.size() - lastIndexAnalysis >= 15 && check== false){
             Log.d("BINHTHUONG","OKKKKKKK");
             sensorValueDisplayer.notifyGasStatusSafe();
             sensorData.setBellOnRequired(false);
@@ -133,7 +135,7 @@ public class MyValueEventListener implements ValueEventListener {
     }
 
     private void notifyHumanDetectionStatus(SensorData sensorData) {
-        if (sensorData.isPeoplePresented()) {
+        if (sensorData.isPeople()) {
             sensorValueDisplayer.notifyHumanDetected();
         } else {
             sensorValueDisplayer.notifyHumanNotDetected();

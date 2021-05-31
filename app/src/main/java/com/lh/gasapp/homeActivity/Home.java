@@ -168,7 +168,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
             isRunningAlarm = false;
             Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
             alarmIntent.putExtra("stateRunningAlarm", isRunningAlarm);
-            alarmIntent.putExtra("statePeople",sensorData.isPeoplePresented());
+            alarmIntent.putExtra("statePeople",sensorData.isPeople());
             startActivity(alarmIntent);
 //              finish();
         }
