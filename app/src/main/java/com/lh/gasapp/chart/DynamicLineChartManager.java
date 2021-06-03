@@ -1,4 +1,4 @@
-package com.lh.gasapp.model;
+package com.lh.gasapp.chart;
 
 import android.util.Log;
 
@@ -14,6 +14,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.lh.gasapp.chart.LineChartWidgetDecorator;
 import com.lh.gasapp.chart.LineDataSetFactory;
 import com.lh.gasapp.chart.axis.AxisFactory;
+import com.lh.gasapp.model.DetailValue;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,16 +41,6 @@ public class DynamicLineChartManager {
         lineData = new LineData();
 
         initSingleLineDataSet();
-        initLineChart();
-    }
-
-    public DynamicLineChartManager(LineChart mLineChart, List<String> names, List<Integer> colors) {
-        this.lineChart_widget = mLineChart;
-        leftAxis= AxisFactory.getAxisLeft(this.lineChart_widget);
-        rightAxis= AxisFactory.getAxisRight(this.lineChart_widget);
-        xAxis = AxisFactory.getXAxis(this.lineChart_widget, timeList);
-        lineData = new LineData();
-        initMultipleLineDataSet(names, colors);
         initLineChart();
     }
 
@@ -87,27 +78,6 @@ public class DynamicLineChartManager {
         lineData.addDataSet(lineDataSet);
         for(DetailValue detailValue : detailValueList ){
             addEntry(detailValue.gasValue, detailValue.time);
-        }
-    }
-
-
-    public void addEntry(List<Integer> numbers) {
-
-        if (lineDataSets.get(0).getEntryCount() == 0) {
-            lineData = new LineData(lineDataSets);
-            lineChart_widget.setData(lineData);
-        }
-        if (timeList.size() > 11) {
-            timeList.clear();
-        }
-        timeList.add(df.format(System.currentTimeMillis()));
-        for (int i = 0; i < numbers.size(); i++) {
-            Entry entry = new Entry(lineDataSet.getEntryCount(), numbers.get(i));
-            lineData.addEntry(entry, i);
-            lineData.notifyDataChanged();
-            lineChart_widget.notifyDataSetChanged();
-            lineChart_widget.setVisibleXRangeMaximum(6);
-            lineChart_widget.moveViewToX(lineData.getEntryCount() - 5);
         }
     }
 

@@ -5,12 +5,12 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.lh.gasapp.model.DynamicLineChartManager;
+import com.lh.gasapp.chart.DynamicLineChartManager;
 import com.lh.gasapp.model.SensorData;
 
 import java.text.SimpleDateFormat;
 
-public class LineChartValueEventListener {
+public class LineChartValueEventListener implements ValueEventListener {
 
     private DynamicLineChartManager dynamicLineChartManager;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");

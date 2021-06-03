@@ -4,14 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -20,18 +18,17 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.lh.gasapp.MainActivity;
 import com.lh.gasapp.R;
 import com.lh.gasapp.firebase.FirebaseWrapper;
 import com.lh.gasapp.firebase.valueEventListener.DetailValueEachDayListener;
-import com.lh.gasapp.firebase.valueEventListener.LineChartValueEventListener;
-import com.lh.gasapp.homeActivity.Home;
 import com.lh.gasapp.model.DetailValue;
-import com.lh.gasapp.model.DynamicLineChartManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Set;
 
 public class DynamicLineChartActivity extends AppCompatActivity {
 
@@ -68,20 +65,19 @@ public class DynamicLineChartActivity extends AppCompatActivity {
 
     public void attachListenerToViewDays(){
         DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dateList.clear();
-                Iterable<DataSnapshot> listOfDates = snapshot.getChildren();
-                for (DataSnapshot eachDateAsKey : listOfDates) {
-                    dateList.add(eachDateAsKey.getKey());
+                    dateList.clear();
+                    Iterable<DataSnapshot> listOfDates = snapshot.getChildren();
+                    for (DataSnapshot eachDateAsKey : listOfDates) {
+                        dateList.add(eachDateAsKey.getKey());
+                    }
+                    if (dateList.size() > 0){
+                        dateToShowChart = dateList.get(dateList.size()-1);
+                        initChartData();
+                    }
                 }
-                if (kt && dateList.size() > 0){
-                    dateToShowChart = dateList.get(dateList.size()-1);
-                    initChartData();
-                    kt = false;
-                }
-            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -94,7 +90,7 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         dynamicLineChartManager = new DynamicLineChartManager(lineChart_widget);
         dynamicLineChartManager.setYAxis(1100, 0, 100);
         anotherDateToShowChart = dateToShowChart.replace('_', '/');
-        attachValueListenerToDate();
+        attachValueListenerToDateOnce();
         dynamicLineChartManager.setDescription("Data of " + anotherDateToShowChart);
     }
 
@@ -105,11 +101,11 @@ public class DynamicLineChartActivity extends AppCompatActivity {
 //        attachValueListenerToDate();
 //    }
 
-    private void attachValueListenerToDate(){
+    private void  attachValueListenerToDateOnce() {
         DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
         DetailValueEachDayListener detailValueEachDayListener = new DetailValueEachDayListener(dateToShowChart);
         detailValueEachDayListener.attachLineChart(dynamicLineChartManager);
-        reference.addValueEventListener(detailValueEachDayListener);
+        reference.addListenerForSingleValueEvent(detailValueEachDayListener);
     }
 
     @Override

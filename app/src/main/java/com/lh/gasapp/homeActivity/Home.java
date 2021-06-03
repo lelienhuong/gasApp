@@ -32,6 +32,7 @@ import com.lh.gasapp.R;
 import com.lh.gasapp.SensorValueDisplayer;
 import com.lh.gasapp.StreamCamera;
 import com.lh.gasapp.chart.DynamicLineChartActivity;
+import com.lh.gasapp.chart.RealtimeChart;
 import com.lh.gasapp.firebase.FirebaseWrapper;
 import com.lh.gasapp.firebase.valueEventListener.MyValueEventListener;
 import com.lh.gasapp.login.saveLogin;
@@ -125,7 +126,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
         button_showHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Home.this, DynamicLineChartActivity.class);
+                Intent intent = new Intent(Home.this, RealtimeChart.class);
                 startActivity(intent);
             }
         });

@@ -1,15 +1,12 @@
 package com.lh.gasapp.firebase.valueEventListener;
 
-import android.content.Intent;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.model.DetailValue;
-import com.lh.gasapp.model.DynamicLineChartManager;
+import com.lh.gasapp.chart.DynamicLineChartManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +18,7 @@ public class DetailValueEachDayListener implements ValueEventListener {
     private String dateToShowChart;
     private ArrayList<DetailValue> detailValueList;
     private DynamicLineChartManager dynamicLineChartManager;
+    private Boolean isFirstTime = true;
 
     public DetailValueEachDayListener(String dateToShowChart){
         this.dateToShowChart = dateToShowChart;
@@ -60,6 +58,5 @@ public class DetailValueEachDayListener implements ValueEventListener {
     public void onCancelled(@NonNull DatabaseError error) {
 
     }
-
-
 }
+

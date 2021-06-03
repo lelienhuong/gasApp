@@ -27,7 +27,7 @@ import com.lh.gasapp.chart.DynamicLineChartActivity;
 import com.lh.gasapp.firebase.FirebaseWrapper;
 import com.lh.gasapp.firebase.valueEventListener.DetailValueEachDayListener;
 import com.lh.gasapp.model.DetailValue;
-import com.lh.gasapp.model.DynamicLineChartManager;
+import com.lh.gasapp.chart.DynamicLineChartManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,7 +63,6 @@ public class History extends AppCompatActivity {
         } else {
             attachListenerToViewDays();;
         }
-          dateToShowChart = "20_4";
 //
         adapter = new ArrayAdapter(History.this,
                                     android.R.layout.simple_list_item_1,
