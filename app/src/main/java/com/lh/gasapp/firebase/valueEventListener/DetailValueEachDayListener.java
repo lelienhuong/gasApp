@@ -16,12 +16,20 @@ public class DetailValueEachDayListener implements ValueEventListener {
 
 
     private String dateToShowChart;
+    private String timeToShowChart;
     private ArrayList<DetailValue> detailValueList;
     private DynamicLineChartManager dynamicLineChartManager;
-    private Boolean isFirstTime = true;
+    private Boolean check = false;
+    private int count = 0;
 
     public DetailValueEachDayListener(String dateToShowChart){
         this.dateToShowChart = dateToShowChart;
+        detailValueList = new ArrayList<DetailValue>();
+    }
+
+    public DetailValueEachDayListener(String dateToShowChart, String timeToShowChart){
+        this.dateToShowChart = dateToShowChart;
+        this.timeToShowChart = timeToShowChart;
         detailValueList = new ArrayList<DetailValue>();
     }
 
@@ -45,10 +53,16 @@ public class DetailValueEachDayListener implements ValueEventListener {
             timeList = hashMap.keySet();
 
             for ( String time : timeList ) {
-                String test = String.valueOf(hashMap.get(time));
-                value = new DetailValue(time,Integer.parseInt( test ));
+                if (time.startsWith(timeToShowChart)) {
+                    check = true;
+                }
+                if (check && count<60){
+                    count++;
+                    String test = String.valueOf(hashMap.get(time));
+                    value = new DetailValue(time, Integer.parseInt(test));
 
-                detailValueList.add(value);
+                    detailValueList.add(value);
+                }
             }
         }
         dynamicLineChartManager.setEntryList(detailValueList);

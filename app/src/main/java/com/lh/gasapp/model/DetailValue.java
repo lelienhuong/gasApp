@@ -7,6 +7,9 @@ public class DetailValue implements Parcelable {
     public String time;
     public int gasValue;
 
+    public DetailValue(){
+    }
+
     public DetailValue(String time, int gasValue) {
         this.time = time;
         this.gasValue = gasValue;

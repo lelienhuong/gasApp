@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -39,7 +41,7 @@ public class DynamicLineChartActivity extends AppCompatActivity {
     private LineChart lineChart_widget;
 
     private DatabaseReference firebaseReference;
-    private ArrayList<DetailValue> detailValueList;
+    private ArrayList<DetailValue> detailValueList = new ArrayList<>();
     private String dateToShowChart;
     private String anotherDateToShowChart;
     private ArrayList<String> dateList = new ArrayList<>();
@@ -47,8 +49,9 @@ public class DynamicLineChartActivity extends AppCompatActivity {
     private ImageView iconBack;
     private ImageView iconCalendar;
 
-    DatePickerDialog.OnDateSetListener setListener;
+    String timeToShowChart = "";
     boolean kt = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +78,45 @@ public class DynamicLineChartActivity extends AppCompatActivity {
                     }
                     if (dateList.size() > 0){
                         dateToShowChart = dateList.get(dateList.size()-1);
-                        initChartData();
+                        attachValueListenerToDateHere();
                     }
                 }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void attachValueListenerToDateHere() {
+        detailValueList.clear();
+        dynamicLineChartManager = new DynamicLineChartManager(lineChart_widget);
+        dynamicLineChartManager.setYAxis(1100, 0, 100);
+        anotherDateToShowChart = dateToShowChart.replace('_', '/');
+        dynamicLineChartManager.setDescription("Data of " + anotherDateToShowChart);
+        Query secondQuery = FirebaseWrapper.getReferrence().child("gasValueHistory").child(dateToShowChart).limitToLast(60);
+        secondQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Iterable<DataSnapshot> listOfDetailValue = snapshot.getChildren();
+                DetailValue value = new DetailValue();
+                Set<String> timeList;
+                for (DataSnapshot eachDetailValue : listOfDetailValue) {
+
+                    HashMap<String, String> hashMap = (HashMap<String, String>) eachDetailValue.getValue();
+                    timeList = hashMap.keySet();
+
+                    for (String time : timeList) {
+                        String test = String.valueOf(hashMap.get(time));
+                        Log.d("fetch", "success" + time + test);
+                        value = new DetailValue(time, Integer.parseInt(test));
+                        detailValueList.add(value);
+                    }
+
+                }
+                dynamicLineChartManager.setEntryList(detailValueList);
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -90,20 +129,20 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         dynamicLineChartManager = new DynamicLineChartManager(lineChart_widget);
         dynamicLineChartManager.setYAxis(1100, 0, 100);
         anotherDateToShowChart = dateToShowChart.replace('_', '/');
-        attachValueListenerToDateOnce();
+        attachValueListenerToDateOnceAdvance();
         dynamicLineChartManager.setDescription("Data of " + anotherDateToShowChart);
     }
-
-//    private void getDataFromIncomingIntent() {
-//        Intent intent = getIntent();
-//        dateToShowChart = intent.getStringExtra("Date");
-//        Log.d("DATE", dateToShowChart);
-//        attachValueListenerToDate();
-//    }
 
     private void  attachValueListenerToDateOnce() {
         DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
         DetailValueEachDayListener detailValueEachDayListener = new DetailValueEachDayListener(dateToShowChart);
+        detailValueEachDayListener.attachLineChart(dynamicLineChartManager);
+        reference.addListenerForSingleValueEvent(detailValueEachDayListener);
+    }
+
+    private void  attachValueListenerToDateOnceAdvance() {
+        DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
+        DetailValueEachDayListener detailValueEachDayListener = new DetailValueEachDayListener(dateToShowChart, timeToShowChart);
         detailValueEachDayListener.attachLineChart(dynamicLineChartManager);
         reference.addListenerForSingleValueEvent(detailValueEachDayListener);
     }
@@ -121,8 +160,29 @@ public class DynamicLineChartActivity extends AppCompatActivity {
             case R.id.calendar:
                 chooseDate();
                 break;
+            case R.id.clock:
+                chooseTime();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void chooseTime() {
+        Calendar calendar = Calendar.getInstance();
+        final int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        final int minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog.OnTimeSetListener setListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                timeToShowChart = hourOfDay + ":" + minute;
+                initChartData();
+            }
+        };
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                DynamicLineChartActivity.this, setListener, hour, minute, false);
+        timePickerDialog.show();
     }
 
     private void chooseDate() {

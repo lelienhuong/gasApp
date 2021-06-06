@@ -55,11 +55,11 @@ public class DynamicLineChartManager {
         lineChart_widget.invalidate();
     }
 
-    private void initMultipleLineDataSet(List<String> names, List<Integer> colors) {
-        lineDataSets = LineDataSetFactory.createMultipleLineDataSet(names, colors);
-    }
-
     public void addEntry(int yValue, String xTime) {
+        if (lineDataSet.getEntryCount() == 0) {
+            lineData.addDataSet(lineDataSet);
+        }
+        lineChart_widget.setData(lineData);
         timeList.add(xTime);
         Log.d("DEBUG", "Adding entry: " + yValue + " at " + lineDataSet.getEntryCount());
 

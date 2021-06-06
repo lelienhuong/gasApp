@@ -54,25 +54,4 @@ public class LineDataSetFactory {
         return lineDataSet;
     }
 
-    public static List<ILineDataSet> createMultipleLineDataSet(List<String> names, List<Integer> colors) {
-        LineDataSet lineDataSet;
-        List<ILineDataSet> lineDataSets = new ArrayList<>();
-
-        for (int i = 0; i < names.size(); i++) {
-            lineDataSet = new LineDataSet(null, names.get(i));
-            lineDataSet.setColor(colors.get(i));
-            lineDataSet.setLineWidth(1.5f);
-            lineDataSet.setCircleRadius(1.5f);
-            lineDataSet.setColor(colors.get(i));
-            lineDataSet.setDrawFilled(true);
-            lineDataSet.setCircleColor(colors.get(i));
-            lineDataSet.setHighLightColor(colors.get(i));
-            lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-            lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-            lineDataSet.setValueTextSize(10f);
-
-            lineDataSets.add(lineDataSet);
-        }
-        return lineDataSets;
-    }
 }

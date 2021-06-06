@@ -10,4 +10,9 @@
         android:title="Sign Out"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/basicInfo"
+        android:title="Basic Information"
+        app:showAsAction="never"/>
+
 </menu>

@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.lh.gasapp.BasicInfo;
 import com.lh.gasapp.ChangeHelperPhone;
 import com.google.firebase.database.ValueEventListener;
 import com.lh.gasapp.History;
@@ -47,8 +48,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     public static Home instance = null;
     private TextView tv_gas, tv_gasLevel, tv_peoplePresentStatus;
     private ProgressBar progressBar;
-    private Button button_showChart;
-    private Button button_showCamera;
+    private Button button_showRealtimeChart;
     private Button button_showHistory;
 
     private DatabaseReference firebaseReference;
@@ -99,6 +99,25 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
 //        } bỏ tại vì k cần thiết
     }
 
+    public void attachListenerToViewDaysFirstTime(){
+        DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                datelist.clear();
+                Iterable<DataSnapshot> listOfDates = snapshot.getChildren();
+                for (DataSnapshot eachDateAsKey : listOfDates){
+                    datelist.add(eachDateAsKey.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void initFireBaseListener() {
         myValueEventListener = new MyValueEventListener();
         myValueEventListener.attachValueDisplayer(this);
@@ -108,25 +127,20 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
     }
 
     private void initButton() {
-//        button_showChart = findViewById(R.id.button_showChart);
-
-//        buttonListener_showChartOnClick = new ButtonActionListener(this);
-//        button_showChart.setOnClickListener(buttonListener_showChartOnClick);
-
-//        button_showCamera = findViewById(R.id.button_showCamera);
-//        button_showCamera.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(Home.this, StreamCamera.class);
-//                startActivity(intent);
-//            }
-//        });
+        button_showRealtimeChart = findViewById(R.id.button_realtimeChart);
+        button_showRealtimeChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, RealtimeChart.class);
+                startActivity(intent);
+            }
+        });
 
         button_showHistory = findViewById(R.id.button_showHistory);
         button_showHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Home.this, RealtimeChart.class);
+                Intent intent = new Intent(Home.this, DynamicLineChartActivity.class);
                 startActivity(intent);
             }
         });
@@ -204,6 +218,8 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
             case R.id.phoneHelper:
                 startActivity(new Intent(this, ChangeHelperPhone.class));
                 break;
+            case R.id.basicInfo:
+                startActivity(new Intent(this, BasicInfo.class));
             default:
                 break;
         }
@@ -236,25 +252,6 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 Home.this, setListener, year, month, day);
         datePickerDialog.show();
-    }
-
-    public void attachListenerToViewDaysFirstTime(){
-        DatabaseReference reference = FirebaseWrapper.getReferrence().child("gasValueHistory");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                datelist.clear();
-                Iterable<DataSnapshot> listOfDates = snapshot.getChildren();
-                for (DataSnapshot eachDateAsKey : listOfDates){
-                    datelist.add(eachDateAsKey.getKey());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
 }
