@@ -183,7 +183,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
             isRunningAlarm = false;
             Intent alarmIntent = new Intent(getApplicationContext(), Alarm.class);
             alarmIntent.putExtra("stateRunningAlarm", isRunningAlarm);
-            alarmIntent.putExtra("statePeople",sensorData.isPeoplePresented());
+            alarmIntent.putExtra("statePeople",sensorData.isPeople());
             startActivity(alarmIntent);
 //              finish();
         }
@@ -214,6 +214,7 @@ public class Home extends AppCompatActivity implements SensorValueDisplayer {
             case R.id.logout:
                 SaveSharedPreference.setUserName(this, "");
                 startActivity(new Intent(this, MainActivity.class));
+                finish();
                 break;
             case R.id.phoneHelper:
                 startActivity(new Intent(this, ChangeHelperPhone.class));

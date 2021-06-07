@@ -149,15 +149,15 @@ public class Alarm extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    SmsManager smsManager = SmsManager.getDefault();
-                    String announceMessage ="";
-                    Boolean statusPeople = getIntent().getBooleanExtra("statePeople",false);
-                    if (statusPeople) {
-                        announceMessage = "Khí gas bị rò rỉ và hiện tại đang có người trong khu vực!";
-                    } else {
-                        announceMessage = "Khí gas bị rò rỉ và hiện tại chưa phát hiện người trong khu vực!";
-                    }
-                    smsManager.sendTextMessage(SaveSharedPreference.getPhoneHelper(getApplication()), null, announceMessage, null, null);
+//                    SmsManager smsManager = SmsManager.getDefault();
+//                    String announceMessage ="";
+//                    Boolean statusPeople = getIntent().getBooleanExtra("statePeople",false);
+//                    if (statusPeople) {
+//                        announceMessage = "Khí gas bị rò rỉ và hiện tại đang có người trong khu vực!";
+//                    } else {
+//                        announceMessage = "Khí gas bị rò rỉ và hiện tại chưa phát hiện người trong khu vực!";
+//                    }
+//                    smsManager.sendTextMessage(SaveSharedPreference.getPhoneHelper(getApplication()), null, announceMessage, null, null);
                     makeCall();
                 }
                 break;
