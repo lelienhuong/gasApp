@@ -59,7 +59,7 @@ public class DynamicLineChartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dynamic_line_chart);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Biểu đồ");
+        getSupportActionBar().setTitle("Chart");
 
         lineChart_widget = (LineChart) findViewById(R.id.dynamic_chart);
 

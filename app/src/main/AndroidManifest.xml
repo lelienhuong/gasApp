@@ -37,7 +37,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignUp" />
-        <activity android:name=".chart.RealtimeChart" />
+        <activity android:name=".chart.RealtimeChart"
+            android:parentActivityName=".homeActivity.Home"/>
     </application>
 
 </manifest>
